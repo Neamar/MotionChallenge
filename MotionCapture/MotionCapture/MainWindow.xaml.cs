@@ -107,9 +107,6 @@ namespace WorkingWithDepthData
 
                     var index = ((x + 0) + heightOffset) * 4;
 
-                    //var distance = GetDistance(depthData[depthIndex], depthData[depthIndex + 1]);
-                    var distance = GetDistanceWithPlayerIndex(depthData[depthIndex], depthData[depthIndex + 1]);
-
                     //we are very close
                     colorFrame[index + BlueIndex] = 0;
                     colorFrame[index + GreenIndex] = 0;
@@ -138,18 +135,6 @@ namespace WorkingWithDepthData
             //bitwise & on firstFrame
             return (int)firstFrame & 7; 
         }
-
-
-        private int GetDistanceWithPlayerIndex(byte firstFrame, byte secondFrame)
-        {
-            //offset by 3 in first byte to get value after player index 
-            int distance = (int)(firstFrame >> 3 | secondFrame << 5);
-            return distance;
-        }
-
-        const float MaxDepthDistance = 4000; // max value returned
-        const float MinDepthDistance = 850; // min value returned
-        const float MaxDepthDistanceOffset = MaxDepthDistance - MinDepthDistance;
 
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
