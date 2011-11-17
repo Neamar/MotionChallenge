@@ -8,8 +8,8 @@
     <ProjectGuid>{5364B452-D8AB-4364-BCB4-7D32E6580BAF}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WorkingWithDepthData</RootNamespace>
-    <AssemblyName>WorkingWithDepthData</AssemblyName>
+    <RootNamespace>MotionCapture</RootNamespace>
+    <AssemblyName>MotionCapture</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
