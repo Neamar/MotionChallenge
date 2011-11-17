@@ -67,7 +67,7 @@ namespace MotionChallenge
             // Texture loading
             textureId = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, textureId);
-            Bitmap bitmap = new Bitmap(@".\Texture.png");
+            Bitmap bitmap = new Bitmap(@"..\..\Texture.png");
             bitmap.RotateFlip(RotateFlipType.RotateNoneFlipY);
             BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bitmapData.Width, bitmapData.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bitmapData.Scan0);
