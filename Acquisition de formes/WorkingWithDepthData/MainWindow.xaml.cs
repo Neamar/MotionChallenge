@@ -76,11 +76,8 @@ namespace WorkingWithDepthData
             //create an image based on returned colors
             
             PlanarImage image = e.ImageFrame.Image;
-            image1.Source = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null, 
+            preview.Source = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null, 
                 ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel/ 8); 
-
-
-
         }
 
         private byte[] GenerateColoredBytes(ImageFrame imageFrame)
@@ -126,21 +123,15 @@ namespace WorkingWithDepthData
                     colorFrame[index + BlueIndex] = 0;
                     colorFrame[index + GreenIndex] = 0;
                     colorFrame[index + RedIndex] = 0;
-                    colorFrame[index +AlphaIndex] = 0;
-
-                    ////equal coloring for monochromatic histogram
-                    //var intensity = CalculateIntensityFromDepth(distance);
-                    //colorFrame[index + BlueIndex] = intensity;
-                    //colorFrame[index + GreenIndex] = intensity;
-                    //colorFrame[index + RedIndex] = intensity;
+                    colorFrame[index + AlphaIndex] = 255;
 
                     ////Color a player
                     if (GetPlayerIndex(depthData[depthIndex]) > 0)
                     {
                         colorFrame[index + BlueIndex] = 0;
-                        colorFrame[index + GreenIndex] = 255;
+                        colorFrame[index + GreenIndex] = 0;
                         colorFrame[index + RedIndex] = 0;
-                        colorFrame[index + AlphaIndex] = 150;
+                        colorFrame[index + AlphaIndex] = 0;
                     }
                     //jump two bytes at a time
                     depthIndex += 2;
@@ -169,13 +160,6 @@ namespace WorkingWithDepthData
         const float MinDepthDistance = 850; // min value returned
         const float MaxDepthDistanceOffset = MaxDepthDistance - MinDepthDistance;
 
-        public static byte CalculateIntensityFromDepth(int distance)
-        {
-            //formula for calculating monochrome intensity for histogram
-            return (byte)(255 - (255 * Math.Max(distance - MinDepthDistance, 0) 
-                / (MaxDepthDistanceOffset)));
-        }
-
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
@@ -183,9 +167,12 @@ namespace WorkingWithDepthData
             nui.Uninitialize(); 
         }
 
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void saveImage_Click(object sender, RoutedEventArgs e)
         {
-            (image1.Source as BitmapSource).Save("C:\\Temp\\lol.png",ImageFormat.Png);
+            //Enregistrer l'image actuellement affichée
+            string now = DateTime.Now.ToString().Replace('/', '-').Replace(':',' ');
+
+            (preview.Source as BitmapSource).Save("..\\..\\..\\..\\Walls\\" + (nbPlayers.SelectedIndex + 1) + "j\\" + now + ".png", ImageFormat.Png);
         }
 
         }

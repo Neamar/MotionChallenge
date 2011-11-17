@@ -3,8 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="600" Width="800" Loaded="Window_Loaded" Unloaded="Window_Unloaded">
     <Grid>
-        <Image Height="480" HorizontalAlignment="Left" Margin="62,41,0,0" Name="image2" Stretch="Fill" VerticalAlignment="Top" Width="640" Source="/WorkingWithDepthData;component/Images/lol.png" />
-        <Image Height="480" HorizontalAlignment="Left" Margin="62,41,0,0" Name="image1" Stretch="Fill" VerticalAlignment="Top" Width="640" />
-        <Button Content="Enregistrer forme" Height="23" HorizontalAlignment="Left" Margin="532,12,0,0" Name="button1" VerticalAlignment="Top" Width="138" Click="button1_Click" />
+        <Image Height="480" HorizontalAlignment="Left" Margin="62,41,0,0" Name="preview" Stretch="Fill" VerticalAlignment="Top" Width="640" />
+        <Button Content="Enregistrer forme" Height="23" HorizontalAlignment="Left" Margin="532,12,0,0" Name="saveImage" VerticalAlignment="Top" Width="138" Click="saveImage_Click" />
+        <ComboBox Height="20" HorizontalAlignment="Left" Margin="336,13,0,0" Name="nbPlayers" VerticalAlignment="Top" Width="194" SelectedIndex="0">
+            <ComboBoxItem Content="1 joueur" />
+            <ComboBoxItem Content="2 joueurs" />
+            <ComboBoxItem Content="3 joueurs" />
+        </ComboBox>
     </Grid>
 </Window>
