@@ -19,7 +19,7 @@ namespace MotionChallenge
 
         public Level(int playerCount)
         {
-            player = new Player(playerCount);
+           player = new Player(playerCount);
         }
 
         public void update()
@@ -27,9 +27,8 @@ namespace MotionChallenge
             if (wall == null)
                 wall = new Wall();
 
-            // update positions and UI
+            // update wall position
             wall.update();
-            player.update();
 
             if (wall.atEndOfLine())
             {

@@ -22,6 +22,9 @@ namespace MotionChallenge
     /// </summary>
     public partial class MainWindow : Window
     {
+        // singleton instance
+        static MainWindow instance;
+
         // GLControl component
         OpenTK.GLControl glControl;
 
@@ -43,9 +46,19 @@ namespace MotionChallenge
         double groundWidth = 180;
         int textureId;
 
+        // Game resources
+        Game game;
+
         public MainWindow()
         {
             InitializeComponent();
+            instance = this;
+        }
+
+        // Use to access UI elements from everywhere in the namespace
+        public static MainWindow getInstance()
+        {
+            return instance;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -74,6 +87,9 @@ namespace MotionChallenge
             bitmap.UnlockBits(bitmapData);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            
+            // Create game resources
+            game = new Game();
         }
 
         private void Paint(object sender, PaintEventArgs e)
@@ -202,6 +218,12 @@ namespace MotionChallenge
 
             GL.Flush();
             glControl.SwapBuffers();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // stop game threads
+            game.stopGame();
         }
     }
 }
