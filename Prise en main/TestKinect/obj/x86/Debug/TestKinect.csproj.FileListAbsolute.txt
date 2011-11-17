@@ -1,0 +1,13 @@
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\bin\Debug\TestKinect.exe
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\bin\Debug\TestKinect.pdb
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\MainWindow.baml
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\MainWindow.g.cs
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\App.g.cs
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\TestKinect_MarkupCompile.cache
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\TestKinect.g.resources
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\TestKinect.Properties.Resources.resources
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\TestKinect.exe
+C:\Users\Benoit\INSA\Kinect\TestKinect\TestKinect\obj\x86\Debug\TestKinect.pdb
