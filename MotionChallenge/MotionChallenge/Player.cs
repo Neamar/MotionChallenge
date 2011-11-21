@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Research.Kinect.Nui;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+//using System.Drawing.Imaging;
+using Coding4Fun.Kinect.Wpf;
 
 namespace MotionChallenge
 {
@@ -65,8 +64,12 @@ namespace MotionChallenge
             //create an image based on returned colors
 
             PlanarImage image = e.ImageFrame.Image;
-            MainWindow.getInstance().player.Source = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
+            BitmapSource bs = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
                 ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel / 8);
+            MainWindow.getInstance().player.Source = bs;
+
+            bs.Save("C:\\Temp\\lol.bmp", ImageFormat.Bmp);
+
         }
 
         private byte[] GenerateColoredBytes(ImageFrame imageFrame)

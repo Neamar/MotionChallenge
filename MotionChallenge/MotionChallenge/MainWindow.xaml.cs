@@ -14,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
+using System.Timers;
 
 namespace MotionChallenge
 {
@@ -27,6 +28,7 @@ namespace MotionChallenge
 
         // GLControl component
         OpenTK.GLControl glControl;
+        System.Timers.Timer glTimer;
 
         // Initialisation des variables liees aux traces OpenGL
         float cameraX = 0;
@@ -40,7 +42,7 @@ namespace MotionChallenge
         double wallWidth = 180;
         double wallHeight = 240;
         double wallDepth = 10;
-        double wallY = -200;
+        double initialWallY = -200;
         double groundMin = -400;
         double groundMax = 100;
         double groundWidth = 180;
@@ -89,11 +91,19 @@ namespace MotionChallenge
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             
             // Create game resources
-            game = new Game();
+           game = new Game();
+            
+        }
+
+        void updateGL(object sender, ElapsedEventArgs e)
+        {
+            glControl.Invalidate();
         }
 
         private void Paint(object sender, PaintEventArgs e)
         {
+            double wallY = initialWallY * game.getLevel().getWall().getPosition() / 1000;
+            Console.WriteLine(wallY.ToString(), game.getLevel().getWall().getPosition());
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             // Initialize OpenGL matrices
@@ -218,12 +228,18 @@ namespace MotionChallenge
 
             GL.Flush();
             glControl.SwapBuffers();
+            
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // stop game threads
             game.stopGame();
+        }
+
+        public GLControl getGLControl()
+        {
+            return glControl;
         }
     }
 }

@@ -43,5 +43,10 @@ namespace MotionChallenge
                 }
             }
         }
+
+        public Wall getWall()
+        {
+            return wall;
+        }
     }
 }

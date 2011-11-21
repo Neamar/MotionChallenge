@@ -11,7 +11,7 @@ namespace MotionChallenge
         private Level level;
         private Thread gameThread;
         
-        private const int THREAD_FREQ = 20;
+        private const int THREAD_FREQ = 35;
 
         public Game()
         {
@@ -42,11 +42,20 @@ namespace MotionChallenge
             while (true)
             {
                 DateTime now = DateTime.Now;
+
+                // Update level and OpenGL
                 if (level != null)
                     level.update((int)now.Subtract(timeRef).TotalMilliseconds);
+                MainWindow.getInstance().getGLControl().Invalidate();
+
                 timeRef = now;
                 Thread.Sleep(1000 / THREAD_FREQ);
             }
+        }
+
+        public Level getLevel()
+        {
+            return level;
         }
     }
 }

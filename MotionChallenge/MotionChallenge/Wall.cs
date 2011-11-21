@@ -7,6 +7,8 @@ namespace MotionChallenge
 {
     class Wall
     {
+        int position = 0;
+
         public Wall()
         {
             //TODO Load random wall
@@ -16,7 +18,12 @@ namespace MotionChallenge
         {
             //TODO
 
-            return false; 
+            return (position >= 1000); 
+        }
+
+        public int getPosition()
+        {
+            return position;
         }
 
         public void update(int elapsed)
@@ -24,7 +31,11 @@ namespace MotionChallenge
             if (!atEndOfLine())
             {
                 // update wall position
-                // update 3D stage
+                position += 5;
+            }
+            else
+            {
+                position = 0;
             }
         }
     }
