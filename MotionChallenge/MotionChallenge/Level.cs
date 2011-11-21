@@ -22,13 +22,13 @@ namespace MotionChallenge
            player = new Player(playerCount);
         }
 
-        public void update()
+        public void update(int elapsed)
         {
             if (wall == null)
                 wall = new Wall();
 
             // update wall position
-            wall.update();
+            wall.update(elapsed);
 
             if (wall.atEndOfLine())
             {

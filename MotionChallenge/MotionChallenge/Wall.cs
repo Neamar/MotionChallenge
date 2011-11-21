@@ -19,7 +19,7 @@ namespace MotionChallenge
             return false; 
         }
 
-        public void update()
+        public void update(int elapsed)
         {
             if (!atEndOfLine())
             {

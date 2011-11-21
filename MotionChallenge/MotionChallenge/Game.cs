@@ -11,7 +11,7 @@ namespace MotionChallenge
         private Level level;
         private Thread gameThread;
         
-        private const int THREAD_FREQ = 10;
+        private const int THREAD_FREQ = 20;
 
         public Game()
         {
@@ -37,10 +37,14 @@ namespace MotionChallenge
         private void threadRoutine()
         {
             Console.WriteLine("Game thread started");
+            DateTime timeRef = DateTime.Now;
+
             while (true)
             {
+                DateTime now = DateTime.Now;
                 if (level != null)
-                    level.update();
+                    level.update((int)now.Subtract(timeRef).TotalMilliseconds);
+                timeRef = now;
                 Thread.Sleep(1000 / THREAD_FREQ);
             }
         }
