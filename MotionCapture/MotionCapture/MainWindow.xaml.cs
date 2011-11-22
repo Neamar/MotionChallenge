@@ -108,9 +108,9 @@ namespace WorkingWithDepthData
                     var index = ((x + 0) + heightOffset) * 4;
 
                     //we are very close
-                    colorFrame[index + BlueIndex] = 0;
-                    colorFrame[index + GreenIndex] = 0;
-                    colorFrame[index + RedIndex] = 0;
+                    colorFrame[index + BlueIndex] = 255;
+                    colorFrame[index + GreenIndex] = 255;
+                    colorFrame[index + RedIndex] = 255;
                     colorFrame[index + AlphaIndex] = 255;
 
                     ////Color a player

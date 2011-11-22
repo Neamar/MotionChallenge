@@ -13,8 +13,9 @@ namespace MotionChallenge
     {
         private int[] textureId;
         private int position = 0;
-        private int addPerUpdate = 5;
+        private int wallSpeed = 10;
         private int wallCount;
+        private int currentWallId = 0;
 
         public static double wallWidth = 180;
         public static double wallHeight = 240;
@@ -38,6 +39,9 @@ namespace MotionChallenge
                 BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bitmapData.Width, bitmapData.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bitmapData.Scan0);
                 bitmap.UnlockBits(bitmapData);
+
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             }
         }
 
@@ -56,11 +60,17 @@ namespace MotionChallenge
             if (!atEndOfLine())
             {
                 // update wall position
-                position += addPerUpdate;
+                position += wallSpeed;
             }
             else
             {
                 position = 0;
+                currentWallId++;
+                if (currentWallId >= wallCount)
+                {
+                    currentWallId = 0;
+                }
+                Console.WriteLine("New wall: " + currentWallId);
             }
         }
 
@@ -69,7 +79,7 @@ namespace MotionChallenge
             double wallY = initialWallY * getPosition() / 1000;
 
             // Mur qui avance
-            GL.BindTexture(TextureTarget.Texture2D, textureId[0]);
+            GL.BindTexture(TextureTarget.Texture2D, textureId[currentWallId]);
             GL.Begin(BeginMode.Quads);
             // Face arriere
             GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth, wallHeight);
