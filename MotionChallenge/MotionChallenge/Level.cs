@@ -82,6 +82,7 @@ namespace MotionChallenge
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Texture2D);
             GL.Enable(EnableCap.AlphaTest);
+            //TODO fix alpha
             GL.AlphaFunc(AlphaFunction.Greater, 0.1f);
 
             //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -146,10 +147,10 @@ namespace MotionChallenge
             GL.Color3(Color.DarkGray);
 
             // Face arriere centrale (en arriere)
-            GL.Vertex3(-Wall.wallWidth, 100, Wall.wallHeight);
-            GL.Vertex3(Wall.wallWidth, 100, Wall.wallHeight);
-            GL.Vertex3(Wall.wallWidth, 100, 0);
-            GL.Vertex3(-Wall.wallWidth, 100, 0);
+            GL.Vertex3(-2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
+            GL.Vertex3(2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
+            GL.Vertex3(2 * Wall.wallWidth, 100, 0);
+            GL.Vertex3(-2 * Wall.wallWidth, 100, 0);
 
             GL.Color3(Color.White);
             GL.End();

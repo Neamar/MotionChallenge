@@ -122,9 +122,9 @@ namespace MotionChallenge
                     if (GetPlayerIndex(depthData[depthIndex]) > 0)
                     {
                         colorFrame[index + BlueIndex] = 0;
-                        colorFrame[index + GreenIndex] = 0;
+                        colorFrame[index + GreenIndex] = 255;
                         colorFrame[index + RedIndex] = 0;
-                        colorFrame[index + AlphaIndex] = 255;
+                        colorFrame[index + AlphaIndex] = 50;
                     }
                     //jump two bytes at a time
                     depthIndex += 2;
@@ -166,10 +166,10 @@ namespace MotionChallenge
             // Silhouette du joueur
             GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
             GL.Begin(BeginMode.Quads);
-            GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, -200, Wall.wallHeight);
-            GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, -200, Wall.wallHeight);
-            GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, -200, 0);
-            GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, -200, 0);
+            GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, -250, Wall.wallHeight);
+            GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, -250, Wall.wallHeight);
+            GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, -250, 0);
+            GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, -250, 0);
 
             GL.Color3(System.Drawing.Color.White);
             GL.End();

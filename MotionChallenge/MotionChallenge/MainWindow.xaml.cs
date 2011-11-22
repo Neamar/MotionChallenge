@@ -62,5 +62,19 @@ namespace MotionChallenge
             // stop game threads
             game.stopGame();
         }
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+             switch (e.Key)
+            {
+                case Key.Space:
+                    {
+                        game.togglePause();
+                        break;
+                    }
+                default:
+                    break;
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace MotionChallenge
     {
         private Level level;
         private System.Timers.Timer timer;
+        private System.Boolean isRunning;
 
         DateTime timeRef = DateTime.Now;
         
@@ -27,6 +28,7 @@ namespace MotionChallenge
             timer.Interval = 1000 / THREAD_FREQ;
             timer.Elapsed += new ElapsedEventHandler(timerRoutine);
             timer.Start();
+            isRunning = true;
         }
 
         public void stopGame()
@@ -37,6 +39,19 @@ namespace MotionChallenge
                 timer.Stop();
                 timer.Close();
             }
+        }
+
+        public void togglePause()
+        {
+            if (isRunning)
+            {
+                timer.Stop();
+            }
+            else
+            {
+                timer.Start();
+            }
+            isRunning = !isRunning;
         }
 
         private void timerRoutine(object sender, ElapsedEventArgs e)
