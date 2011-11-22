@@ -108,7 +108,7 @@ namespace MotionChallenge
             
             //Dessin du mur
             wall.draw();
-            // TODO player.draw();
+            player.draw();
 
             GL.Flush();
             glControl.SwapBuffers();

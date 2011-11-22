@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Research.Kinect.Nui;
+using OpenTK.Graphics.OpenGL;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
-//using System.Drawing.Imaging;
-using Coding4Fun.Kinect.Wpf;
+using TexLib;
 
 namespace MotionChallenge
 {
@@ -16,6 +20,8 @@ namespace MotionChallenge
     {
         private int count;
         private Runtime nui;
+        private BitmapSource bitmapSource;
+        private int playerTextureId;
 
         public Player(int playerCount)
         {
@@ -66,12 +72,8 @@ namespace MotionChallenge
             //create an image based on returned colors
 
             PlanarImage image = e.ImageFrame.Image;
-            BitmapSource bs = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
+            bitmapSource = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
                 ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel / 8);
-            MainWindow.getInstance().player.Source = bs;
-
-            bs.Save("C:\\Temp\\lol.bmp", ImageFormat.Bmp);
-
         }
 
         private byte[] GenerateColoredBytes(ImageFrame imageFrame)
@@ -111,10 +113,10 @@ namespace MotionChallenge
                     var index = ((x + 0) + heightOffset) * 4;
 
                     //Pas de joueur
-                    colorFrame[index + BlueIndex] = 0;
-                    colorFrame[index + GreenIndex] = 0;
-                    colorFrame[index + RedIndex] = 0;
-                    colorFrame[index + AlphaIndex] = 255;
+                    colorFrame[index + BlueIndex] = 255;
+                    colorFrame[index + GreenIndex] = 255;
+                    colorFrame[index + RedIndex] = 255;
+                    colorFrame[index + AlphaIndex] = 0;
 
                     ////Color a player
                     if (GetPlayerIndex(depthData[depthIndex]) > 0)
@@ -122,7 +124,7 @@ namespace MotionChallenge
                         colorFrame[index + BlueIndex] = 0;
                         colorFrame[index + GreenIndex] = 0;
                         colorFrame[index + RedIndex] = 0;
-                        colorFrame[index + AlphaIndex] = 0;
+                        colorFrame[index + AlphaIndex] = 255;
                     }
                     //jump two bytes at a time
                     depthIndex += 2;
@@ -137,6 +139,40 @@ namespace MotionChallenge
             //returns 0 = no player, 1 = 1st player, 2 = 2nd player...
             //bitwise & on firstFrame
             return (int)firstFrame & 7;
+        }
+
+        private Bitmap GetBitmap(BitmapSource source)
+        {
+            Bitmap bmp = new Bitmap(source.PixelWidth, source.PixelHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            BitmapData data = bmp.LockBits(
+              new Rectangle(System.Drawing.Point.Empty, bmp.Size),
+              ImageLockMode.WriteOnly,
+              System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            source.CopyPixels(Int32Rect.Empty, data.Scan0, data.Height * data.Stride, data.Stride);
+            bmp.UnlockBits(data);
+            bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            return bmp;
+        }
+
+        public void draw()
+        {
+            // Chargement de la texture du joueur
+            if (bitmapSource != null)
+            {
+                playerTextureId = TexUtil.CreateTextureFromBitmap(GetBitmap(bitmapSource));
+                GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
+            }
+            
+            // Silhouette du joueur
+            GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
+            GL.Begin(BeginMode.Quads);
+            GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, -200, Wall.wallHeight);
+            GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, -200, Wall.wallHeight);
+            GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, -200, 0);
+            GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, -200, 0);
+
+            GL.Color3(System.Drawing.Color.White);
+            GL.End();
         }
     }
 }
