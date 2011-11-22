@@ -7,7 +7,8 @@ namespace MotionChallenge
 {
     class Wall
     {
-        int position = 0;
+        private int position = 0;
+        private int addPerUpdate = 5;
 
         public Wall()
         {
@@ -16,8 +17,6 @@ namespace MotionChallenge
 
         public bool atEndOfLine()
         {
-            //TODO
-
             return (position >= 1000); 
         }
 
@@ -31,7 +30,7 @@ namespace MotionChallenge
             if (!atEndOfLine())
             {
                 // update wall position
-                position += 5;
+                position += addPerUpdate;
             }
             else
             {

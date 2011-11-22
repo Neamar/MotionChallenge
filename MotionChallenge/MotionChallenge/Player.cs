@@ -53,6 +53,8 @@ namespace MotionChallenge
             // compare player's body and hole in the wall
             // return value between 0 and 100
 
+            // TODO check if player is in the hole
+
             return 0;
         }
 

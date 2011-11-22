@@ -1,61 +1,49 @@
-﻿using System;
+﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Timers;
 
 namespace MotionChallenge
 {
     class Game
     {
         private Level level;
-        private Thread gameThread;
+        private System.Timers.Timer timer;
+
+        DateTime timeRef = DateTime.Now;
         
-        private const int THREAD_FREQ = 35;
+        private const int THREAD_FREQ = 30;
 
-        public Game()
+        public Game(GLControl glControl)
         {
-            level = new Level(/*playerCount*/1);
+            level = new Level(glControl, /*playerCount*/1);
 
-            // create game thread
-            gameThread = new Thread(new ThreadStart(threadRoutine));
-            gameThread.Name = "MotionChallenge.GameThread";
-            gameThread.Start();
+            // create game loop routine
+            timer = new System.Timers.Timer();
+            timer.Interval = 1000 / THREAD_FREQ;
+            timer.Elapsed += new ElapsedEventHandler(timerRoutine);
+            timer.Start();
         }
 
         public void stopGame()
         {
-            // kill game thread
-            if (gameThread != null)
+            // kill game timer
+            if (timer != null)
             {
-                gameThread.Abort();
-                gameThread.Join();
-                Console.WriteLine("Game thread killed");
+                timer.Stop();
+                timer.Close();
             }
         }
 
-        private void threadRoutine()
+        private void timerRoutine(object sender, ElapsedEventArgs e)
         {
-            Console.WriteLine("Game thread started");
-            DateTime timeRef = DateTime.Now;
-
-            while (true)
-            {
-                DateTime now = DateTime.Now;
-
-                // Update level and OpenGL
-                if (level != null)
-                    level.update((int)now.Subtract(timeRef).TotalMilliseconds);
-                MainWindow.getInstance().getGLControl().Invalidate();
-
-                timeRef = now;
-                Thread.Sleep(1000 / THREAD_FREQ);
-            }
-        }
-
-        public Level getLevel()
-        {
-            return level;
+            DateTime now = DateTime.Now;
+            level.update((int)now.Subtract(timeRef).TotalMilliseconds);
+            timeRef = now;
         }
     }
 }
