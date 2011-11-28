@@ -60,14 +60,16 @@ namespace MotionChallenge
             if (wall.atEndOfLine())
             {
                 // check player
-                if (player.percentOut(wall) >= HOLE_THRESHOLD)
+                int[] percent = player.percentValues(wall);
+                Console.WriteLine("In " + percent[0] + "        | Out " + percent[1]);
+                /*if ( >= HOLE_THRESHOLD)
                 {
                     // Not Ok: Game Over
                 }
                 else
                 {
                     // Ok: increase score, new wall, etc
-                }
+                }*/
             }
         }
 
@@ -110,7 +112,7 @@ namespace MotionChallenge
             
             //Dessin du mur
             wall.draw();
-            player.draw();
+            player.draw(wall.getY());
 
             GL.Flush();
             glControl.SwapBuffers();

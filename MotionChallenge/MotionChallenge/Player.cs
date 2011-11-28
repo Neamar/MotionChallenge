@@ -21,7 +21,10 @@ namespace MotionChallenge
         private int count;
         private Runtime nui;
         private BitmapSource bitmapSource;
+        private Bitmap lastBitmap;
         private int playerTextureId;
+        private const int playerAlpha = 200;
+        
 
         public Player(int playerCount)
         {
@@ -54,14 +57,60 @@ namespace MotionChallenge
                 nui.Uninitialize();
         }
         
-        public int percentOut(Wall wall)
+        public int[] percentValues(Wall wall)
         {
             // compare player's body and hole in the wall
             // return value between 0 and 100
+            Bitmap bmp = lastBitmap;
 
-            // TODO check if player is in the hole
+            BitmapData bmpd = bmp.LockBits(
+                new Rectangle(0, 0, bmp.Width, bmp.Height),
+                ImageLockMode.ReadOnly,
+                bmp.PixelFormat
+            );
 
-            return 0;
+            //Copier les données basiques
+            IntPtr ptr = bmpd.Scan0;
+
+            int bytes = Math.Abs(bmpd.Stride) * bmp.Height;
+            byte[] playerValues = new byte[bytes];
+            System.Runtime.InteropServices.Marshal.Copy(ptr, playerValues, 0, bytes);
+
+            byte[] wallValues = wall.getCurrentWallByteArray();
+
+            int playerPixelsInTheWall = 0;
+            int playerPixelsOutTheWall = 1;
+            int emptyPixelsInTheWall = 0;
+
+            for (int counter = 3; counter < playerValues.Length; counter += 4)
+            {
+                byte wallValue = wallValues[counter];
+                byte playerValue = playerValues[counter];
+
+                if (wallValue == 0)
+                {
+                    emptyPixelsInTheWall++;
+
+                    if (playerValue == playerAlpha)
+                        playerPixelsInTheWall++;
+                }
+                else
+                {
+                    if (playerValue == playerAlpha)
+                       playerPixelsOutTheWall++;
+                }
+            }
+
+            int[] percent = new int[2];
+            //TODO document
+            // in the hole
+            percent[0] = 100 * playerPixelsInTheWall / emptyPixelsInTheWall;
+            // out the hole
+            percent[1] = 100 * playerPixelsOutTheWall / (playerPixelsOutTheWall + playerPixelsInTheWall);
+
+            bmp.UnlockBits(bmpd);
+
+            return percent;
         }
 
         void nui_DepthFrameReady(object sender, ImageFrameReadyEventArgs e)
@@ -72,8 +121,10 @@ namespace MotionChallenge
             //create an image based on returned colors
 
             PlanarImage image = e.ImageFrame.Image;
+            
             bitmapSource = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
                 ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel / 8);
+            lastBitmap = GetBitmap(bitmapSource);
         }
 
         private byte[] GenerateColoredBytes(ImageFrame imageFrame)
@@ -121,10 +172,10 @@ namespace MotionChallenge
                     ////Color a player
                     if (GetPlayerIndex(depthData[depthIndex]) > 0)
                     {
-                        colorFrame[index + BlueIndex] = 0;
+                        colorFrame[index + BlueIndex] = 255;
                         colorFrame[index + GreenIndex] = 255;
-                        colorFrame[index + RedIndex] = 0;
-                        colorFrame[index + AlphaIndex] = 50;
+                        colorFrame[index + RedIndex] = 255;
+                        colorFrame[index + AlphaIndex] = playerAlpha;
                     }
                     //jump two bytes at a time
                     depthIndex += 2;
@@ -154,8 +205,9 @@ namespace MotionChallenge
             return bmp;
         }
 
-        public void draw()
+        public void draw(double wallPosition)
         {
+            wallPosition -= 5;
             // Chargement de la texture du joueur
             if (bitmapSource != null)
             {
@@ -166,10 +218,10 @@ namespace MotionChallenge
             // Silhouette du joueur
             GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
             GL.Begin(BeginMode.Quads);
-            GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, -200, Wall.wallHeight);
-            GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, -200, Wall.wallHeight);
-            GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, -200, 0);
-            GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, -200, 0);
+            GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, wallPosition, Wall.wallHeight);
+            GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, wallPosition, Wall.wallHeight);
+            GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, wallPosition, 0);
+            GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, wallPosition, 0);
 
             GL.Color3(System.Drawing.Color.White);
             GL.End();

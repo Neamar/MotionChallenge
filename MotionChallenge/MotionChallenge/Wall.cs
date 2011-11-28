@@ -12,6 +12,7 @@ namespace MotionChallenge
     class Wall
     {
         private int[] textureId;
+        private string[] wallsPath;
         private int position = 0;
         private int wallSpeed = 10;
         private int wallCount;
@@ -24,7 +25,7 @@ namespace MotionChallenge
 
         public Wall(int playerCount)
         {
-            string[] wallsPath = Directory.GetFiles(@"..\..\..\..\Walls\" + playerCount + @"j\", "*.png");
+            wallsPath = Directory.GetFiles(@"..\..\..\..\Walls\" + playerCount + @"j\", "*.png");
             wallCount = wallsPath.Length;
             
             textureId = new int[wallCount];
@@ -74,9 +75,36 @@ namespace MotionChallenge
             }
         }
 
+        public byte[] getCurrentWallByteArray()
+        {
+            Bitmap bmp = new Bitmap(wallsPath[currentWallId]);
+            BitmapData bmpd = bmp.LockBits(
+                new Rectangle(0, 0, bmp.Width, bmp.Height),
+                ImageLockMode.ReadOnly,
+                bmp.PixelFormat
+            );
+
+            //Copier les données basiques
+            IntPtr ptr = bmpd.Scan0;
+
+            int bytes = Math.Abs(bmpd.Stride) * bmp.Height;
+            byte[] values = new byte[bytes];
+            System.Runtime.InteropServices.Marshal.Copy(ptr, values, 0, bytes);
+
+            bmp.UnlockBits(bmpd);
+
+            return values;
+
+        }
+
+
+        public double getY()
+        {
+             return initialWallY * getPosition() / 1000;
+        }
         public void draw()
         {
-            double wallY = initialWallY * getPosition() / 1000;
+            double wallY = getY();
 
             // Mur qui avance
             GL.BindTexture(TextureTarget.Texture2D, textureId[currentWallId]);
