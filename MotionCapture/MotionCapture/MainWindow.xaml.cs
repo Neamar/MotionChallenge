@@ -13,7 +13,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Coding4Fun.Kinect.Wpf;
-using Microsoft.Research.Kinect.Nui; 
+using Microsoft.Research.Kinect.Nui;
+using System.Drawing;
+using System.Drawing.Imaging; 
 
 namespace WorkingWithDepthData
 {
@@ -67,8 +69,58 @@ namespace WorkingWithDepthData
             //create an image based on returned colors
             
             PlanarImage image = e.ImageFrame.Image;
-            preview.Source = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null, 
-                ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel/ 8); 
+            BitmapSource bmps =  BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null, 
+                ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel/ 8);
+
+            preview.Source = bmps;
+
+            Bitmap bmp = new Bitmap(bmps.PixelWidth, bmps.PixelHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
+            BitmapData enhanced = bmp.LockBits(new Rectangle(System.Drawing.Point.Empty, bmp.Size), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+            bmps.CopyPixels(Int32Rect.Empty, enhanced.Scan0, enhanced.Height * enhanced.Stride, enhanced.Stride);
+
+            //Copier les données basiques
+            IntPtr ptr = enhanced.Scan0;
+
+            int bytes = Math.Abs(enhanced.Stride) * bmp.Height;
+            byte[] originalBgraValues = new byte[bytes];
+            byte[] enhancedBgraValues = new byte[bytes];
+            System.Runtime.InteropServices.Marshal.Copy(ptr, originalBgraValues, 0, bytes);
+            System.Runtime.InteropServices.Marshal.Copy(ptr, enhancedBgraValues, 0, bytes);
+
+
+            for (int counter = 0; counter < originalBgraValues.Length; counter += 4)
+            {
+                if (originalBgraValues[counter] == 0)
+                {
+                    quickSetPixel(enhancedBgraValues, counter - 4);
+                    quickSetPixel(enhancedBgraValues, counter + 4);
+                    quickSetPixel(enhancedBgraValues, counter - 4*bmp.Width);
+                    quickSetPixel(enhancedBgraValues, counter + 4*bmp.Width);
+                    quickSetPixel(enhancedBgraValues, counter - 4 * bmp.Width - 4);
+                    quickSetPixel(enhancedBgraValues, counter - 4 * bmp.Width + 4);
+                    quickSetPixel(enhancedBgraValues, counter + 4 * bmp.Width - 4);
+                    quickSetPixel(enhancedBgraValues, counter + 4 * bmp.Width +  4);
+                }
+            }
+
+            System.Runtime.InteropServices.Marshal.Copy(enhancedBgraValues, 0, ptr, bytes);
+
+            bmp.UnlockBits(enhanced);
+
+            // Convert Bitmap to BitmapSource
+            bmps = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+ 
+            enhancedComponent.Source = bmps;
+        }
+
+        void quickSetPixel(byte[] datas, int counter, byte value = 150)
+        {
+            if (counter < 0 || counter + 3 > datas.Length)
+                return;
+
+            datas[counter] = datas[counter + 1] = datas[counter + 2] = datas[counter + 3] = value;
         }
 
         private byte[] GenerateColoredBytes(ImageFrame imageFrame)
@@ -148,7 +200,8 @@ namespace WorkingWithDepthData
             //Enregistrer l'image actuellement affichée
             string now = DateTime.Now.ToString().Replace('/', '-').Replace(':',' ');
 
-            (preview.Source as BitmapSource).Save("..\\..\\..\\..\\Walls\\" + (nbPlayers.SelectedIndex + 1) + "j\\" + now + ".png", ImageFormat.Png);
+
+            (preview.Source as BitmapSource).Save("..\\..\\..\\..\\Walls\\" + (nbPlayers.SelectedIndex + 1) + "j\\" + now + ".png", Coding4Fun.Kinect.Wpf.ImageFormat.Png);
         }
 
         }
