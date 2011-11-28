@@ -225,6 +225,11 @@ namespace MotionChallenge
 
             GL.Color3(System.Drawing.Color.White);
             GL.End();
+
+            if (bitmapSource != null)
+            {
+                GL.DeleteTexture(playerTextureId);
+            }
         }
     }
 }
