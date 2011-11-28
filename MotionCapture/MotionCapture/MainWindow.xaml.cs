@@ -30,7 +30,10 @@ namespace WorkingWithDepthData
         }
 
         //Kinect Runtime
-        Runtime nui; 
+        Runtime nui;
+
+        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
+        public static extern bool DeleteObject(IntPtr hObject);
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -109,8 +112,9 @@ namespace WorkingWithDepthData
             bmp.UnlockBits(enhanced);
 
             // Convert Bitmap to BitmapSource
-            bmps = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bmp.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
+            IntPtr bmpPtr = bmp.GetHbitmap();
+            bmps = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(bmpPtr, IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            DeleteObject(bmpPtr);
  
             enhancedComponent.Source = bmps;
         }
