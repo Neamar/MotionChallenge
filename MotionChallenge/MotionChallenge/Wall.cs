@@ -23,6 +23,9 @@ namespace MotionChallenge
         public static double wallDepth = 10;
         double initialWallY = -200;
 
+        Random randomizer = new Random();
+        Color[] colors = new Color[4];
+
         public Wall(int playerCount)
         {
             wallsPath = Directory.GetFiles(@"..\..\..\..\Walls\" + playerCount + @"j\", "*.png");
@@ -43,6 +46,9 @@ namespace MotionChallenge
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             }
+
+            // generate colors for first wall
+            generateNewColors();
         }
 
         public int getNumberOfWalls()
@@ -71,6 +77,7 @@ namespace MotionChallenge
             {
                 position = 0;
                 currentWallId++;
+                generateNewColors();
                 if (currentWallId >= wallCount)
                 {
                     currentWallId = 0;
@@ -150,13 +157,29 @@ namespace MotionChallenge
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth * 3 / 4, 0);
 
                 // Face frontale
-                GL.Color3(Color.Green); GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY, wallHeight);
-                GL.Color3(Color.Red); GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY, wallHeight);
-                GL.Color3(Color.Orange); GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY, 0);
-                GL.Color3(Color.Blue); GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY, 0);
+                GL.Color3(colors[0]); GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY, wallHeight);
+                GL.Color3(colors[1]); GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY, wallHeight);
+                GL.Color3(colors[2]); GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY, 0);
+                GL.Color3(colors[3]); GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY, 0);
 
                 GL.Color3(Color.White);
             GL.End();
+        }
+
+        private void generateNewColors()
+        {
+            for (int i = 0; i < colors.Length; i++ )
+            {
+                colors[i] = getRandomColor();
+            }
+        }
+
+        private Color getRandomColor()
+        {
+            return Color.FromArgb(
+                    randomizer.Next(256),
+                    randomizer.Next(256),
+                    randomizer.Next(256));
         }
     }
 }

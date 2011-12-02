@@ -29,8 +29,8 @@ namespace MotionChallenge
         private bool hudIsDirty = true;
         private int totalScore = 0;
         private int lastScore = 0;
-        private int totalWall = 1;
-        private int currentWall = 0;
+        private int totalWall = 0;
+        private int currentWall = 1;
 
         private GLControl glControl;
 
@@ -77,16 +77,6 @@ namespace MotionChallenge
                 totalScore += lastScore;
                 currentWall++;
                 hudIsDirty = true;
-                
-
-                /*if ( >= HOLE_THRESHOLD)
-                {
-                    // Not Ok: Game Over
-                }
-                else
-                {
-                    // Ok: increase score, new wall, etc
-                }*/
             }
         }
 
@@ -153,6 +143,12 @@ namespace MotionChallenge
                 MainWindow.getInstance().infosLabel.Text = infos;
 
                 hudIsDirty = true;
+
+                if (currentWall > totalWall)
+                {
+                    //End of the game
+                    MainWindow.getInstance().Close();
+                }
             }
             /////////////////////////////////////////////////////
 
