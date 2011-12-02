@@ -45,6 +45,11 @@ namespace MotionChallenge
             }
         }
 
+        public int getNumberOfWalls()
+        {
+            return wallCount;
+        }
+
         public bool atEndOfLine()
         {
             return (position >= 1000); 

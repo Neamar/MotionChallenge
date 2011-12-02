@@ -56,12 +56,28 @@ namespace MotionChallenge
             if(nui != null)
                 nui.Uninitialize();
         }
+
+        public int getPlayerCount()
+        {
+            return count;
+        }
         
         public int[] percentValues(Wall wall)
         {
+            // contains percent in and out
+            int[] percent = new int[2];
+
             // compare player's body and hole in the wall
             // return value between 0 and 100
             Bitmap bmp = lastBitmap;
+
+            // bmp can be void if Kinect not connected
+            if (bmp == null)
+            {
+                percent[0] = 0;
+                percent[1] = 100;
+                return percent;
+            }
 
             BitmapData bmpd = bmp.LockBits(
                 new Rectangle(0, 0, bmp.Width, bmp.Height),
@@ -101,7 +117,6 @@ namespace MotionChallenge
                 }
             }
 
-            int[] percent = new int[2];
             //TODO document
             // in the hole
             percent[0] = 100 * playerPixelsInTheWall / emptyPixelsInTheWall;
@@ -210,22 +225,19 @@ namespace MotionChallenge
             // Chargement de la texture du joueur
             if (bitmapSource != null)
             {
+
                 playerTextureId = TexUtil.CreateTextureFromBitmap(GetBitmap(bitmapSource));
-            }
-            
-            // Silhouette du joueur
-            GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
-            GL.Begin(BeginMode.Quads);
-            GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, wallPosition, Wall.wallHeight);
-            GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, wallPosition, Wall.wallHeight);
-            GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, wallPosition, 0);
-            GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, wallPosition, 0);
+                // Silhouette du joueur
+                GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
+                GL.Begin(BeginMode.Quads);
+                GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, wallPosition, Wall.wallHeight);
+                GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, wallPosition, Wall.wallHeight);
+                GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, wallPosition, 0);
+                GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, wallPosition, 0);
 
-            GL.Color3(System.Drawing.Color.White);
-            GL.End();
+                GL.Color3(System.Drawing.Color.White);
+                GL.End();
 
-            if (bitmapSource != null)
-            {
                 GL.DeleteTexture(playerTextureId);
             }
         }

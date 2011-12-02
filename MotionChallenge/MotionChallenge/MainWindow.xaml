@@ -1,9 +1,11 @@
 ﻿<Window x:Class="MotionChallenge.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Motion Challenge" Height="520" Width="660" Loaded="Window_Loaded" Closing="Window_Closing" KeyDown="Window_KeyDown">
+        Title="Motion Challenge" Height="588" Width="663" Loaded="Window_Loaded" Closing="Window_Closing" KeyDown="Window_KeyDown">
     <Grid>
-        <WindowsFormsHost Height="480" Name="windowsFormsHost" Width="640" />
-        <Image Height="480" HorizontalAlignment="Left" Name="player" Stretch="Fill" VerticalAlignment="Bottom" Width="640" />
+        <WindowsFormsHost Height="480" Name="windowsFormsHost" Width="640" Margin="0,68,2,0" />
+        <Label Content="Score : " Height="28" Margin="392,20,188,0" Name="scoreLabelUseless" VerticalAlignment="Top" />
+        <Label Content="0000" Height="62" HorizontalAlignment="Right" Margin="0,0,1,0" Name="scoreLabel" VerticalAlignment="Top" Width="193" FontFamily="Consolas" FontSize="45" />
+        <TextBlock Height="62" HorizontalAlignment="Left" Name="infosLabel" Text="Informations" VerticalAlignment="Top" Width="154" Margin="3,1,0,0" />
     </Grid>
 </Window>

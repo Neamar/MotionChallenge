@@ -19,9 +19,9 @@ namespace MotionChallenge
         
         private const int THREAD_FREQ = 30;
 
-        public Game(GLControl glControl)
+        public Game(GLControl glControl, int playerCount)
         {
-            level = new Level(glControl, /*playerCount*/1);
+            level = new Level(glControl, playerCount);
 
             // create game loop routine
             timer = new System.Timers.Timer();

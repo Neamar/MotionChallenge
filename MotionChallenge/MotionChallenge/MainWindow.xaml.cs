@@ -32,10 +32,13 @@ namespace MotionChallenge
         // Game resources
         Game game;
 
-        public MainWindow()
+        int playerCount;
+
+        public MainWindow(int playerCount)
         {
             InitializeComponent();
             instance = this;
+            this.playerCount = playerCount;
         }
 
         // Use to access UI elements from everywhere in the namespace
@@ -54,7 +57,7 @@ namespace MotionChallenge
             windowsFormsHost.Child = glControl;
           
             // Create game resources
-            game = new Game(glControl);
+            game = new Game(glControl, playerCount);
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

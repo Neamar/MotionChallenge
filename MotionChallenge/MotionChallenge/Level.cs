@@ -20,9 +20,17 @@ namespace MotionChallenge
      */
     class Level
     {
+        private const string HUD_INFO = "Nombre de joueur(s) : %pc\r\nNombre de murs : %w/%tw\r\nDernier score : %ls";
+
         private Player player;
         private Wall wall;
         private const int HOLE_THRESHOLD = 10;
+
+        private bool hudIsDirty = true;
+        private int totalScore = 0;
+        private int lastScore = 0;
+        private int totalWall = 1;
+        private int currentWall = 0;
 
         private GLControl glControl;
 
@@ -45,6 +53,7 @@ namespace MotionChallenge
            glControl = _glControl;
            player = new Player(playerCount);
            wall = new Wall(playerCount);
+           totalWall = wall.getNumberOfWalls();
 
            initStage(); 
         }
@@ -63,6 +72,13 @@ namespace MotionChallenge
                 // check player
                 int[] percent = player.percentValues(wall);
                 Console.WriteLine("In " + percent[0] + "        | Out " + percent[1]);
+                lastScore = Math.Max(0, percent[0] - (percent[1] - 20)/2 );
+
+                totalScore += lastScore;
+                currentWall++;
+                hudIsDirty = true;
+                
+
                 /*if ( >= HOLE_THRESHOLD)
                 {
                     // Not Ok: Game Over
@@ -75,7 +91,7 @@ namespace MotionChallenge
         }
 
 ////////////////////// --- UI methods below  --- //////////////////////
-         
+
         private void initStage()
         {
             // Add draw routine
@@ -90,8 +106,8 @@ namespace MotionChallenge
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             // Initalize OpenGL font rendering
-            fontTextureId = TexUtil.CreateTextureFromFile(@"..\..\Font.png");
-            textureFont = new TextureFont(fontTextureId);
+            //fontTextureId = TexUtil.CreateTextureFromFile(@"..\..\Font.png");
+            //textureFont = new TextureFont(fontTextureId);
         }
 
         private void drawAll(object sender, PaintEventArgs e)
@@ -117,7 +133,7 @@ namespace MotionChallenge
             player.draw(wall.getY());
 
             // Indicateurs textuels
-            textureFont.WriteStringAt("Hole in the Wall", 4, 8, 96, 0);
+            //textureFont.WriteStringAt("Hole in the Wall", 4, 8, 96, 0);
 
             GL.Flush();
             glControl.SwapBuffers();
@@ -125,6 +141,23 @@ namespace MotionChallenge
 
         private void draw()
         {
+            //////////////////// 2D graphics ////////////////////
+            if (hudIsDirty)
+            {
+                MainWindow.getInstance().scoreLabel.Content = totalScore.ToString();
+                string infos = HUD_INFO;
+                infos = infos.Replace("%pc", player.getPlayerCount().ToString());
+                infos = infos.Replace("%w", currentWall.ToString());
+                infos = infos.Replace("%tw", totalWall.ToString());
+                infos = infos.Replace("%ls", lastScore.ToString());
+                MainWindow.getInstance().infosLabel.Text = infos;
+
+                hudIsDirty = true;
+            }
+            /////////////////////////////////////////////////////
+
+            //////////////////// 3D graphics ////////////////////
+
             // Univers
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
@@ -186,6 +219,8 @@ namespace MotionChallenge
                 GL.Vertex3(1000, groundMin, 0);
                 GL.Vertex3(-1000, groundMin, 0);
             GL.End();
+
+            //////////////////////////////////////////////////////
         }
     }
 }
