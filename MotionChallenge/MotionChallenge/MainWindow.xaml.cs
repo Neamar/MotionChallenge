@@ -1,6 +1,5 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -28,7 +27,7 @@ namespace MotionChallenge
 
         // GLControl component
         OpenTK.GLControl glControl;
-        
+
         // Game resources
         Game game;
 
@@ -55,11 +54,11 @@ namespace MotionChallenge
 
             // Add the component into the WindowsFormHost
             windowsFormsHost.Child = glControl;
-          
+
             // Create game resources
             game = new Game(glControl, playerCount);
         }
-        
+
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // stop game threads
@@ -68,7 +67,7 @@ namespace MotionChallenge
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-             switch (e.Key)
+            switch (e.Key)
             {
                 case Key.Space:
                     {

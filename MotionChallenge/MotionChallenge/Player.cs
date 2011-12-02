@@ -24,7 +24,6 @@ namespace MotionChallenge
         private Bitmap lastBitmap;
         private int playerTextureId;
         private const int playerAlpha = 200;
-        
 
         public Player(int playerCount)
         {
@@ -53,7 +52,7 @@ namespace MotionChallenge
 
         ~Player()
         {
-            if(nui != null)
+            if (nui != null)
                 nui.Uninitialize();
         }
 
@@ -61,7 +60,7 @@ namespace MotionChallenge
         {
             return count;
         }
-        
+
         public int[] percentValues(Wall wall)
         {
             // contains percent in and out
@@ -113,7 +112,7 @@ namespace MotionChallenge
                 else
                 {
                     if (playerValue == playerAlpha)
-                       playerPixelsOutTheWall++;
+                        playerPixelsOutTheWall++;
                 }
             }
 
@@ -136,21 +135,23 @@ namespace MotionChallenge
             //create an image based on returned colors
 
             PlanarImage image = e.ImageFrame.Image;
-            
+
             bitmapSource = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
                 ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel / 8);
+
             lastBitmap = GetBitmap(bitmapSource);
+
+            //Image processing
+            //lastBitmap = Util.AntiAliasing(lastBitmap);
         }
 
         private byte[] GenerateColoredBytes(ImageFrame imageFrame)
         {
-
             int height = imageFrame.Image.Height;
             int width = imageFrame.Image.Width;
 
             //Depth data for each pixel
             Byte[] depthData = imageFrame.Image.Bits;
-
 
             //colorFrame contains color information for all pixels in image
             //Height x Width x 4 (Red, Green, Blue, empty byte)
@@ -166,16 +167,13 @@ namespace MotionChallenge
             const int RedIndex = 2;
             const int AlphaIndex = 3;
 
-
             var depthIndex = 0;
             for (var y = 0; y < height; y++)
             {
-
                 var heightOffset = y * width;
 
                 for (var x = 0; x < width; x++)
                 {
-
                     var index = ((x + 0) + heightOffset) * 4;
 
                     //Pas de joueur
@@ -225,17 +223,16 @@ namespace MotionChallenge
             // Chargement de la texture du joueur
             if (bitmapSource != null)
             {
-
                 playerTextureId = TexUtil.CreateTextureFromBitmap(GetBitmap(bitmapSource));
                 // Silhouette du joueur
                 GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
                 GL.Begin(BeginMode.Quads);
-                GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, wallPosition, Wall.wallHeight);
-                GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, wallPosition, Wall.wallHeight);
-                GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, wallPosition, 0);
-                GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, wallPosition, 0);
+                    GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, wallPosition, Wall.wallHeight);
+                    GL.TexCoord2(1, 0); GL.Vertex3(Wall.wallWidth, wallPosition, Wall.wallHeight);
+                    GL.TexCoord2(1, 1); GL.Vertex3(Wall.wallWidth, wallPosition, 0);
+                    GL.TexCoord2(0, 1); GL.Vertex3(-Wall.wallWidth, wallPosition, 0);
 
-                GL.Color3(System.Drawing.Color.White);
+                    GL.Color3(System.Drawing.Color.White);
                 GL.End();
 
                 GL.DeleteTexture(playerTextureId);

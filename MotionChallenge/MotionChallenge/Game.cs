@@ -1,6 +1,5 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace MotionChallenge
         private System.Boolean isRunning;
 
         DateTime timeRef = DateTime.Now;
-        
+
         private const int THREAD_FREQ = 30;
 
         public Game(GLControl glControl, int playerCount)

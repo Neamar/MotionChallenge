@@ -30,9 +30,9 @@ namespace MotionChallenge
         {
             wallsPath = Directory.GetFiles(@"..\..\..\..\Walls\" + playerCount + @"j\", "*.png");
             wallCount = wallsPath.Length;
-            
+
             textureId = new int[wallCount];
-            
+
             // Texture loading
             for (int i = 0; i < wallCount; i++)
             {
@@ -58,7 +58,7 @@ namespace MotionChallenge
 
         public bool atEndOfLine()
         {
-            return (position >= 1000); 
+            return (position >= 1000);
         }
 
         public int getPosition()
@@ -105,14 +105,13 @@ namespace MotionChallenge
             bmp.UnlockBits(bmpd);
 
             return values;
-
         }
-
 
         public double getY()
         {
-             return initialWallY * getPosition() / 1000;
+            return initialWallY * getPosition() / 1000;
         }
+
         public void draw()
         {
             double wallY = getY();
@@ -168,7 +167,7 @@ namespace MotionChallenge
 
         private void generateNewColors()
         {
-            for (int i = 0; i < colors.Length; i++ )
+            for (int i = 0; i < colors.Length; i++)
             {
                 colors[i] = getRandomColor();
             }

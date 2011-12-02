@@ -29,9 +29,9 @@ namespace MotionChallenge
         {
             int playerCount = int.Parse((sender as Button).Name.Replace("nbPlayer", ""));
 
-             mainWindow = new MainWindow(playerCount);
-             mainWindow.Show();
-             mainWindow.Closing += new System.ComponentModel.CancelEventHandler(mainWindow_Closing);
+            mainWindow = new MainWindow(playerCount);
+            mainWindow.Show();
+            mainWindow.Closing += new System.ComponentModel.CancelEventHandler(mainWindow_Closing);
 
             this.Hide();
         }

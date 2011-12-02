@@ -1,6 +1,5 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,12 +49,12 @@ namespace MotionChallenge
 
         public Level(GLControl _glControl, int playerCount)
         {
-           glControl = _glControl;
-           player = new Player(playerCount);
-           wall = new Wall(playerCount);
-           totalWall = wall.getNumberOfWalls();
+            glControl = _glControl;
+            player = new Player(playerCount);
+            wall = new Wall(playerCount);
+            totalWall = wall.getNumberOfWalls();
 
-           initStage(); 
+            initStage();
         }
 
         public void update(int elapsed)
@@ -65,14 +64,14 @@ namespace MotionChallenge
             //player.update(elapsed);
 
             // force OpenGL update in main thread
-            glControl.Invalidate();          
-          
+            glControl.Invalidate();
+
             if (wall.atEndOfLine())
             {
                 // check player
                 int[] percent = player.percentValues(wall);
                 Console.WriteLine("In " + percent[0] + "        | Out " + percent[1]);
-                lastScore = Math.Max(0, percent[0] - (percent[1] - 20)/2 );
+                lastScore = Math.Max(0, percent[0] - (percent[1] - 20) / 2);
 
                 totalScore += lastScore;
                 currentWall++;
@@ -80,7 +79,7 @@ namespace MotionChallenge
             }
         }
 
-////////////////////// --- UI methods below  --- //////////////////////
+        ////////////////////// --- UI methods below  --- //////////////////////
 
         private void initStage()
         {
@@ -117,7 +116,7 @@ namespace MotionChallenge
 
             //Dessin de la scène alentour
             this.draw();
-            
+
             //Dessin du mur
             wall.draw();
             player.draw(wall.getY());
