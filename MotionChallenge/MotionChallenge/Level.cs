@@ -8,6 +8,7 @@ using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using TexLib;
 
 namespace MotionChallenge
 {
@@ -32,12 +33,12 @@ namespace MotionChallenge
         float cameraDirectionX = 0;
         float cameraDirectionY = 0;
         float cameraDirectionZ = 170;
-        float cameraSpeed = 10;
         Matrix4 cameraLookAt;
         double groundMin = -400;
         double groundMax = 100;
         double groundWidth = 180;
-        int textureId;
+        int fontTextureId;
+        TextureFont textureFont;
 
         public Level(GLControl _glControl, int playerCount)
         {
@@ -88,8 +89,9 @@ namespace MotionChallenge
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+            // Initalize OpenGL font rendering
+            fontTextureId = TexUtil.CreateTextureFromFile(@"..\..\Font.png");
+            textureFont = new TextureFont(fontTextureId);
         }
 
         private void drawAll(object sender, PaintEventArgs e)
@@ -114,6 +116,9 @@ namespace MotionChallenge
             wall.draw();
             player.draw(wall.getY());
 
+            // Indicateurs textuels
+            textureFont.WriteStringAt("Hole in the Wall", 4, 8, 96, 0);
+
             GL.Flush();
             glControl.SwapBuffers();
         }
@@ -123,63 +128,63 @@ namespace MotionChallenge
             // Univers
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
-            GL.Color3(Color.LightGray);
+                GL.Color3(Color.LightGray);
 
-            // Face arriere gauche
-            GL.Vertex3(-1000, 1, Wall.wallHeight * 4);
-            GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight * 4);
-            GL.Vertex3(-Wall.wallWidth, 1, 0);
-            GL.Vertex3(-1000, 1, 0);
+                // Face arriere gauche
+                GL.Vertex3(-1000, 1, Wall.wallHeight * 4);
+                GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight * 4);
+                GL.Vertex3(-Wall.wallWidth, 1, 0);
+                GL.Vertex3(-1000, 1, 0);
 
-            // Face arriere centrale (en avant)
-            GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight * 4);
-            GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight * 4);
-            GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight);
-            GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight);
+                // Face arriere centrale (en avant)
+                GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight * 4);
+                GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight * 4);
+                GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight);
+                GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight);
 
-            // Face arriere droite
-            GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight * 4);
-            GL.Vertex3(1000, 1, Wall.wallHeight * 4);
-            GL.Vertex3(1000, 1, 0);
-            GL.Vertex3(Wall.wallWidth, 1, 0);
+                // Face arriere droite
+                GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight * 4);
+                GL.Vertex3(1000, 1, Wall.wallHeight * 4);
+                GL.Vertex3(1000, 1, 0);
+                GL.Vertex3(Wall.wallWidth, 1, 0);
 
-            GL.Color3(Color.White);
+                GL.Color3(Color.White);
             GL.End();
+
+            // Univers 2
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
-            GL.Color3(Color.DarkGray);
+                GL.Color3(Color.DarkGray);
 
-            // Face arriere centrale (en arriere)
-            GL.Vertex3(-2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
-            GL.Vertex3(2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
-            GL.Vertex3(2 * Wall.wallWidth, 100, 0);
-            GL.Vertex3(-2 * Wall.wallWidth, 100, 0);
+                // Face arriere centrale (en arriere)
+                GL.Vertex3(-2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
+                GL.Vertex3(2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
+                GL.Vertex3(2 * Wall.wallWidth, 100, 0);
+                GL.Vertex3(-2 * Wall.wallWidth, 100, 0);
 
-            GL.Color3(Color.White);
+                GL.Color3(Color.White);
             GL.End();
-
-            //wall.draw
 
             // Sol (trajectoire du mur)
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
-            GL.Color3(Color.Yellow);
+                GL.Color3(Color.Yellow);
 
-            GL.Vertex3(-groundWidth, groundMax, 0);
-            GL.Vertex3(groundWidth, groundMax, 0);
-            GL.Vertex3(groundWidth, groundMin, 0);
-            GL.Vertex3(-groundWidth, groundMin, 0);
+                GL.Vertex3(-groundWidth, groundMax, 0);
+                GL.Vertex3(groundWidth, groundMax, 0);
+                GL.Vertex3(groundWidth, groundMin, 0);
+                GL.Vertex3(-groundWidth, groundMin, 0);
 
-            GL.Color3(Color.White);
+                GL.Color3(Color.White);
             GL.End();
 
             // Sol (global)
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
-            GL.Vertex3(-1000, groundMax, 0);
-            GL.Vertex3(1000, groundMax, 0);
-            GL.Vertex3(1000, groundMin, 0);
-            GL.Vertex3(-1000, groundMin, 0);
+                GL.Vertex3(-1000, groundMax, 0);
+                GL.Vertex3(1000, groundMax, 0);
+                GL.Vertex3(1000, groundMin, 0);
+                GL.Vertex3(-1000, groundMin, 0);
             GL.End();
         }
     }

@@ -201,7 +201,6 @@ namespace MotionChallenge
               System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
             source.CopyPixels(Int32Rect.Empty, data.Scan0, data.Height * data.Stride, data.Stride);
             bmp.UnlockBits(data);
-            bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             return bmp;
         }
 
@@ -212,7 +211,6 @@ namespace MotionChallenge
             if (bitmapSource != null)
             {
                 playerTextureId = TexUtil.CreateTextureFromBitmap(GetBitmap(bitmapSource));
-                GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
             }
             
             // Silhouette du joueur
