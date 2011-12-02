@@ -1,6 +1,5 @@
 ﻿/////////////////////////////////////////////////////////////////////////
 //
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // This code is licensed under the terms of the Microsoft Kinect for
 // Windows SDK (Beta) License Agreement:
@@ -38,8 +37,7 @@ namespace WorkingWithDepthData
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            SetupKinect(); 
-
+            SetupKinect();
         }
 
         private void SetupKinect()
@@ -61,20 +59,19 @@ namespace WorkingWithDepthData
 
                 //DepthAndPlayerIndex ImageType
                 nui.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240,
-                    ImageType.DepthAndPlayerIndex); 
+                    ImageType.DepthAndPlayerIndex);
             }
         }
 
         void nui_DepthFrameReady(object sender, ImageFrameReadyEventArgs e)
         {
             //Convert depth information for a pixel into color information
-            byte[] ColoredBytes = GenerateColoredBytes(e.ImageFrame); 
+            byte[] ColoredBytes = GenerateColoredBytes(e.ImageFrame);
 
             //create an image based on returned colors
-            
             PlanarImage image = e.ImageFrame.Image;
-            BitmapSource bmps =  BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null, 
-                ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel/ 8);
+            BitmapSource bmps = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
+                ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel / 8);
 
             preview.Source = bmps;
         }
@@ -89,13 +86,11 @@ namespace WorkingWithDepthData
 
         private byte[] GenerateColoredBytes(ImageFrame imageFrame)
         {
-            
             int height = imageFrame.Image.Height;
             int width = imageFrame.Image.Width;
 
             //Depth data for each pixel
-            Byte[] depthData = imageFrame.Image.Bits; 
-
+            Byte[] depthData = imageFrame.Image.Bits;
 
             //colorFrame contains color information for all pixels in image
             //Height x Width x 4 (Red, Green, Blue, empty byte)
@@ -110,17 +105,14 @@ namespace WorkingWithDepthData
             const int GreenIndex = 1;
             const int RedIndex = 2;
             const int AlphaIndex = 3;
-                       
 
             var depthIndex = 0;
             for (var y = 0; y < height; y++)
             {
-                
                 var heightOffset = y * width;
 
                 for (var x = 0; x < width; x++)
                 {
-
                     var index = ((x + 0) + heightOffset) * 4;
 
                     //we are very close
@@ -149,27 +141,24 @@ namespace WorkingWithDepthData
         {
             //returns 0 = no player, 1 = 1st player, 2 = 2nd player...
             //bitwise & on firstFrame
-            return (int)firstFrame & 7; 
+            return (int)firstFrame & 7;
         }
-
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
             //cleanup
-            nui.Uninitialize(); 
+            nui.Uninitialize();
         }
 
         private void saveImage_Click(object sender, RoutedEventArgs e)
         {
             //Enregistrer l'image actuellement affichée
-            string now = DateTime.Now.ToString().Replace('/', '-').Replace(':',' ');
+            string now = DateTime.Now.ToString().Replace('/', '-').Replace(':', ' ');
 
             //Image processing
             Bitmap antiAliasBmp = Util.AntiAliasing(Util.GetBitmap(preview.Source as BitmapSource));
             Util.GetBitmapSource(antiAliasBmp).Save("..\\..\\..\\..\\Walls\\" + (nbPlayers.SelectedIndex + 1) + "j\\" + now + ".png", Coding4Fun.Kinect.Wpf.ImageFormat.Png);
         }
-
-        }
-
     }
+}
 
