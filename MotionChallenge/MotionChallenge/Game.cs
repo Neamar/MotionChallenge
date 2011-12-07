@@ -38,6 +38,8 @@ namespace MotionChallenge
                 timer.Stop();
                 timer.Close();
             }
+
+            level.reset();
         }
 
         public void togglePause()

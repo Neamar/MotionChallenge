@@ -51,6 +51,14 @@ namespace MotionChallenge
             generateNewColors();
         }
 
+        public void reset()
+        {
+            for (int i = 0; i < wallCount; i++)
+            {
+                GL.DeleteTexture(textureId[i]);
+            }
+        }
+
         public int getNumberOfWalls()
         {
             return wallCount;

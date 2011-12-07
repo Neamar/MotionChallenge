@@ -50,7 +50,7 @@ namespace MotionChallenge
             }
         }
 
-        ~Player()
+        public void reset()
         {
             if (nui != null)
                 nui.Uninitialize();

@@ -44,9 +44,7 @@ namespace MotionChallenge
         double groundMin = -400;
         double groundMax = 100;
         double groundWidth = 180;
-        int fontTextureId;
-        TextureFont textureFont;
-
+        
         public Level(GLControl _glControl, int playerCount)
         {
             glControl = _glControl;
@@ -79,6 +77,13 @@ namespace MotionChallenge
             }
         }
 
+        public void reset()
+        {
+            wall.reset();
+            player.reset();
+        }
+
+        
         ////////////////////// --- UI methods below  --- //////////////////////
 
         private void initStage()
