@@ -198,6 +198,34 @@ namespace MotionChallenge
                 GL.Color3(Color.White);
             GL.End();
 
+            // Sol (dégradé vers la zone de jeu)
+            /*GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.Begin(BeginMode.Quads);
+                GL.Color3(Color.Yellow);
+
+                GL.Vertex3(-groundWidth, -200 + Wall.wallDepth * 2, 0);
+                GL.Vertex3(groundWidth, -200 + Wall.wallDepth * 2, 0);
+
+                GL.Color3(Color.Red);
+                GL.Vertex3(groundWidth, -200 + Wall.wallDepth, 0);
+                GL.Vertex3(-groundWidth, -200 + Wall.wallDepth, 0);
+
+                GL.Color3(Color.White);
+            GL.End();*/
+
+            // Sol (zone de jeu)
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.Begin(BeginMode.Quads);
+                GL.Color3(Color.Red);
+
+                GL.Vertex3(-groundWidth, Wall.initialWallY * (1 - Wall.wallSpeedFix/1000) + Wall.wallDepth, 0);
+                GL.Vertex3(groundWidth, Wall.initialWallY * (1 - Wall.wallSpeedFix/1000) + Wall.wallDepth, 0);
+                GL.Vertex3(groundWidth, Wall.initialWallY * (1 - Wall.wallSpeedFix/1000), 0);
+                GL.Vertex3(-groundWidth, Wall.initialWallY * (1 - Wall.wallSpeedFix/1000), 0);
+
+                GL.Color3(Color.White);
+            GL.End();
+
             // Sol (trajectoire du mur)
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
