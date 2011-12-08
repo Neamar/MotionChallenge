@@ -4,9 +4,9 @@
         Title="Motion Challenge" Height="588" Width="663" Loaded="Window_Loaded" Closing="Window_Closing" KeyDown="Window_KeyDown" WindowStartupLocation="CenterScreen">
     <Grid>
         <WindowsFormsHost Height="480" Name="windowsFormsHost" Width="640" Margin="0,68,0,0" />
-        <Label Content="Score : " Height="28" Margin="392,20,188,0" Name="scoreLabelUseless" VerticalAlignment="Top" />
+        <Label Content="Score : " Height="28" Margin="0,20,191,0" Name="scoreLabelUseless" VerticalAlignment="Top" HorizontalAlignment="Right" Width="51" />
         <Label Content="0000" Height="62" HorizontalAlignment="Right" Margin="0,0,1,0" Name="scoreLabel" VerticalAlignment="Top" Width="193" FontFamily="Consolas" FontSize="45" />
         <TextBlock Height="62" HorizontalAlignment="Left" Name="infosLabel" Text="Informations" VerticalAlignment="Top" Width="154" Margin="3,1,0,0" />
-        <ProgressBar Height="10" HorizontalAlignment="Left" Margin="2,58,0,0" Name="wallProgress" VerticalAlignment="Top" Width="640" IsIndeterminate="False" />
+        <ProgressBar Height="10" HorizontalAlignment="Center" Name="wallProgress" VerticalAlignment="Top" Width="640" IsIndeterminate="False" Margin="0,58,2,0" />
     </Grid>
 </Window>

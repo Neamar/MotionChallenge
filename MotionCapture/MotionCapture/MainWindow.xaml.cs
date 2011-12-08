@@ -152,7 +152,11 @@ namespace WorkingWithDepthData
             distance = distance / nbDistance;
             int distanceTropLoin = Math.Max(0, Math.Min(400, distance - 2400));
             int distanceTropProche = Math.Max(0, Math.Min(400, 2400 - distance));
-            distanceLoinProgress.Value = distanceTropLoin;
+            if (distance != 0)
+                distanceLoinProgress.Value = distanceTropLoin;
+            else
+                distanceLoinProgress.Value = distanceLoinProgress.Maximum;
+
             distanceProcheProgress.Value = distanceTropProche;
 
             int distanceCouleur = Math.Max(distanceTropProche, distanceTropLoin);

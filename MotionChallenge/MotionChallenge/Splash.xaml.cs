@@ -51,7 +51,7 @@ namespace MotionChallenge
             scoreLabel.Content = (sender as MainWindow).scoreLabel.Content;
 
             // Met a jour le tableau des scores
-            listBox.Items.Add("(" + getModeName() + ") \t" + (sender as MainWindow).scoreLabel.Content);
+            listBox.Items.Insert(0, getModeName() + " \t" + (sender as MainWindow).scoreLabel.Content);
 
             this.Show();
         }
@@ -60,7 +60,7 @@ namespace MotionChallenge
         {
             if (gameMode > 0)
             {
-                if (gameMode < 3)
+                if (gameMode < 4)
                 {
                     return gameMode + " j";
                 }
