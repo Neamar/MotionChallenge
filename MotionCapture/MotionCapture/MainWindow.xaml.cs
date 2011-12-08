@@ -115,7 +115,10 @@ namespace WorkingWithDepthData
             const int RedIndex = 2;
             const int AlphaIndex = 3;
 
-            var depthIndex = 0;
+            int depthIndex = 0;
+            int distance = 0;
+            int nbDistance = 1;
+
             for (var y = 0; y < height; y++)
             {
                 var heightOffset = y * width;
@@ -137,11 +140,28 @@ namespace WorkingWithDepthData
                         colorFrame[index + GreenIndex] = 0;
                         colorFrame[index + RedIndex] = 0;
                         colorFrame[index + AlphaIndex] = 0;
+                        distance += (int)(depthData[depthIndex] >> 3 | depthData[depthIndex + 1] << 5);
+                        nbDistance++;
                     }
                     //jump two bytes at a time
                     depthIndex += 2;
                 }
             }
+
+            //Calculer la véritable distance
+            distance = distance / nbDistance;
+            int distanceTropLoin = Math.Max(0, Math.Min(400, distance - 2400));
+            int distanceTropProche = Math.Max(0, Math.Min(400, 2400 - distance));
+            distanceLoinProgress.Value = distanceTropLoin;
+            distanceProcheProgress.Value = distanceTropProche;
+
+            int distanceCouleur = Math.Max(distanceTropProche, distanceTropLoin);
+            System.Windows.Media.Color couleurProgress = new System.Windows.Media.Color();
+            couleurProgress.ScR = (float)(distanceCouleur) / 100;
+            couleurProgress.ScG = (float)(400 - distanceCouleur) / 800;
+            couleurProgress.ScA = 1;
+            distanceLoinProgress.Foreground = new SolidColorBrush(couleurProgress);
+            distanceProcheProgress.Foreground = new SolidColorBrush(couleurProgress);
 
             return colorFrame;
         }
@@ -169,7 +189,7 @@ namespace WorkingWithDepthData
             String path = (nbPlayers.SelectedIndex + 1) + "j\\" + now + ".png";
             Util.GetBitmapSource(antiAliasBmp).Save("..\\..\\..\\..\\Walls\\" + path, Coding4Fun.Kinect.Wpf.ImageFormat.Png);
 
-            pathLabel.Content = "Enregistré : " + path;
+            pathLabel.Content = path;
         }
     }
 }

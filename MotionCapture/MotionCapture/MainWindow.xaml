@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Motion Capture" Height="571" Width="676" Loaded="Window_Loaded" Unloaded="Window_Unloaded" Background="{x:Null}">
         <Grid Height="533" Width="660" Background="White" HorizontalAlignment="Left" VerticalAlignment="Top">
-        <Button Content="Enregistrer forme" Height="23" HorizontalAlignment="Left" Margin="210,10,0,0" Name="saveImage" VerticalAlignment="Top" Width="138" Click="saveImage_Click" />
-            <ComboBox Height="23" HorizontalAlignment="Left" Margin="10,10,0,0" Name="nbPlayers" VerticalAlignment="Top" Width="194" SelectedIndex="0">
+        <Button Content="Enregistrer forme" Height="24" HorizontalAlignment="Left" Margin="151,10,0,0" Name="saveImage" VerticalAlignment="Top" Width="138" Click="saveImage_Click" />
+            <ComboBox Height="24" HorizontalAlignment="Left" Margin="10,10,0,0" Name="nbPlayers" VerticalAlignment="Top" Width="135" SelectedIndex="0">
                 <ComboBoxItem Content="1 joueur" />
                 <ComboBoxItem Content="2 joueurs" />
                 <ComboBoxItem Content="3 joueurs" />
@@ -12,6 +12,12 @@
         <Grid Height="480" HorizontalAlignment="Left" Margin="10,43,0,0" Name="kinect_container" VerticalAlignment="Top" Width="640" Background="Black">
             <Image Height="480" HorizontalAlignment="Left" Name="preview" Stretch="Fill" VerticalAlignment="Top" Width="640" />
         </Grid>
-        <Label Height="27" HorizontalAlignment="Left" Margin="354,10,0,0" Name="pathLabel" VerticalAlignment="Top" Width="207" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" />
+        <Label Height="24" HorizontalAlignment="Left" Margin="295,10,0,0" Name="pathLabel" VerticalAlignment="Top" Width="207" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" />
+        <ProgressBar Height="24" HorizontalAlignment="Right" Margin="0,10,87,0" Name="distanceProcheProgress" VerticalAlignment="Top" Width="65" Value="0" Foreground="Red" Minimum="0" Maximum="400">
+            <ProgressBar.LayoutTransform>
+                <ScaleTransform ScaleX="-1"></ScaleTransform>
+            </ProgressBar.LayoutTransform>
+        </ProgressBar>
+        <ProgressBar Foreground="Red" Height="24" HorizontalAlignment="Right" Margin="0,10,22,0" Minimum="0" Name="distanceLoinProgress" Value="0" VerticalAlignment="Top" Width="65" Maximum="400" />
     </Grid>
 </Window>

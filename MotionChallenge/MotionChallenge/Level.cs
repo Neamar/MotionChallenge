@@ -1,13 +1,8 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Windows.Forms;
-using TexLib;
 
 namespace MotionChallenge
 {
@@ -145,6 +140,8 @@ namespace MotionChallenge
                 infos = infos.Replace("%tw", totalWall.ToString());
                 infos = infos.Replace("%ls", lastScore.ToString());
                 MainWindow.getInstance().infosLabel.Text = infos;
+                MainWindow.getInstance().wallProgress.Value = currentWall - 1;
+                MainWindow.getInstance().wallProgress.Maximum = totalWall;
 
                 hudIsDirty = true;
 
