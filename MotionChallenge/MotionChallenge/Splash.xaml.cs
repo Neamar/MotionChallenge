@@ -41,5 +41,10 @@ namespace MotionChallenge
             scoreLabel.Content = (sender as MainWindow).scoreLabel.Content;
             this.Show();
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Window x:Class="MotionChallenge.Splash"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Motion Challenge" Height="287" Width="300" WindowStartupLocation="CenterScreen">
+        Title="Motion Challenge" Height="287" Width="300" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
     <Grid>
         <Button Content="Un joueur" Height="38" HorizontalAlignment="Left" Margin="12,12,0,0" Name="nbPlayer1" VerticalAlignment="Top" Width="254" Click="nbPlayer_Click" />
         <Button Content="Deux joueurs" Height="38" HorizontalAlignment="Left" Margin="12,56,0,0" Name="nbPlayer2" VerticalAlignment="Top" Width="254" Click="nbPlayer_Click" />

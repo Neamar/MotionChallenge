@@ -60,6 +60,15 @@ namespace WorkingWithDepthData
                 //DepthAndPlayerIndex ImageType
                 nui.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240,
                     ImageType.DepthAndPlayerIndex);
+
+                try
+                {
+                    nui.NuiCamera.ElevationAngle = 6;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show("Impossible de régler l'orientation du Kinect. Erreur : " + ex.Message);
+                }
             }
         }
 
@@ -157,7 +166,10 @@ namespace WorkingWithDepthData
 
             //Image processing
             Bitmap antiAliasBmp = Util.AntiAliasing(Util.GetBitmap(preview.Source as BitmapSource));
-            Util.GetBitmapSource(antiAliasBmp).Save("..\\..\\..\\..\\Walls\\" + (nbPlayers.SelectedIndex + 1) + "j\\" + now + ".png", Coding4Fun.Kinect.Wpf.ImageFormat.Png);
+            String path = (nbPlayers.SelectedIndex + 1) + "j\\" + now + ".png";
+            Util.GetBitmapSource(antiAliasBmp).Save("..\\..\\..\\..\\Walls\\" + path, Coding4Fun.Kinect.Wpf.ImageFormat.Png);
+
+            pathLabel.Content = "Enregistré : " + path;
         }
     }
 }

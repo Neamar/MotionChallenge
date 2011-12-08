@@ -43,6 +43,16 @@ namespace MotionChallenge
                 //DepthAndPlayerIndex ImageType
                 nui.DepthStream.Open(ImageStreamType.Depth, 2, ImageResolution.Resolution320x240,
                     ImageType.DepthAndPlayerIndex);
+                
+                //Régler l'angle pour être constant. Valeur retenue : 6°.
+                try
+                {
+                    nui.NuiCamera.ElevationAngle = 6;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    MessageBox.Show("Impossible de régler l'orientation du Kinect. Erreur : " + ex.Message);
+                }
             }
             else
             {
