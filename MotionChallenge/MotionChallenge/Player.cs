@@ -149,7 +149,7 @@ namespace MotionChallenge
             bitmapSource = BitmapSource.Create(image.Width, image.Height, 96, 96, PixelFormats.Bgra32, null,
                 ColoredBytes, image.Width * PixelFormats.Bgra32.BitsPerPixel / 8);
 
-            lastBitmap = GetBitmap(bitmapSource);
+            lastBitmap = Util.GetBitmap(bitmapSource);
 
             //Image processing
             //lastBitmap = Util.AntiAliasing(lastBitmap);
@@ -215,26 +215,17 @@ namespace MotionChallenge
             return (int)firstFrame & 7;
         }
 
-        private Bitmap GetBitmap(BitmapSource source)
-        {
-            Bitmap bmp = new Bitmap(source.PixelWidth, source.PixelHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            BitmapData data = bmp.LockBits(
-              new Rectangle(System.Drawing.Point.Empty, bmp.Size),
-              ImageLockMode.WriteOnly,
-              System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
-            source.CopyPixels(Int32Rect.Empty, data.Scan0, data.Height * data.Stride, data.Stride);
-            bmp.UnlockBits(data);
-            return bmp;
-        }
-
         public void draw(double wallPosition)
         {
             wallPosition -= 5;
-            // Chargement de la texture du joueur
+
+            // Create the player OpenGL texture from the Kinect data
+            // A new texture is created at each frame of the game
             if (bitmapSource != null)
             {
-                playerTextureId = TexUtil.CreateTextureFromBitmap(GetBitmap(bitmapSource));
-                // Silhouette du joueur
+                playerTextureId = TexUtil.CreateTextureFromBitmap(Util.GetBitmap(bitmapSource));
+
+                // Player silhouette
                 GL.BindTexture(TextureTarget.Texture2D, playerTextureId);
                 GL.Begin(BeginMode.Quads);
                     GL.TexCoord2(0, 0); GL.Vertex3(-Wall.wallWidth, wallPosition, Wall.wallHeight);
@@ -245,6 +236,7 @@ namespace MotionChallenge
                     GL.Color3(System.Drawing.Color.White);
                 GL.End();
 
+                // Free the player texture
                 GL.DeleteTexture(playerTextureId);
             }
         }

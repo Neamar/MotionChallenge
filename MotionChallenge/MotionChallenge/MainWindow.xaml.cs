@@ -25,8 +25,11 @@ namespace MotionChallenge
         // singleton instance
         static MainWindow instance;
 
-        // GLControl component
-        OpenTK.GLControl glControl;
+        // GLControl component used for displaying OpenGL graphics on Windows Forms (not on WPF windows)
+        // For use in WPF : The GLControl component has to be included in a WindowsFormsHost first
+        // Then the WindowsFormsHost component should be included in the WPF window
+        // Because of airspace limitations, nothing can draw on top of the WindowsFormHost component
+        GLControl glControl;
 
         // Game resources
         Game game;
@@ -52,7 +55,7 @@ namespace MotionChallenge
             glControl = new OpenTK.GLControl();
             glControl.SetBounds(0, 0, 640, 480);
 
-            // Add the component into the WindowsFormHost
+            // Add the GLControl component into the WindowsFormHost
             windowsFormsHost.Child = glControl;
 
             // Create game resources

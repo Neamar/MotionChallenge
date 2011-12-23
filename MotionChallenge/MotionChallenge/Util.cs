@@ -14,40 +14,11 @@ namespace MotionChallenge
 {
     class Util
     {
-        public static Bitmap AntiAliasing(Bitmap _input)
-        {
-            Image<Bgra, Byte> input;
-            Image<Bgra, Byte> outputGaussian;
-            Image<Bgra, Byte> outputGaussianResized;
-            Image<Bgra, Byte> outputThreshold;
-            Image<Bgra, Byte> outputThresholdResized;
-
-            // Chargement de l'image
-            input = new Image<Bgra, Byte>(_input);
-
-            // Filtre gaussien
-            outputGaussian = input.Clone();
-            for (int i = 1; i < 10; i = i + 2)
-            {
-                CvInvoke.cvSmooth(input, outputGaussian, SMOOTH_TYPE.CV_GAUSSIAN, i, i, 0, 0);
-            }
-
-            // Redimensionnment de l'image apres flitre Gaussien
-            outputGaussianResized = new Image<Bgra, Byte>(outputGaussian.Cols * 2, outputGaussian.Rows * 2);
-            CvInvoke.cvResize(outputGaussian, outputGaussianResized, INTER.CV_INTER_CUBIC);
-
-            // Application du seuil
-            outputThreshold = outputGaussianResized.Clone();
-            CvInvoke.cvThreshold(outputGaussianResized, outputThreshold, 127, 255, THRESH.CV_THRESH_BINARY);
-
-            // Redimensionnment de l'image apres seuillage
-            outputThresholdResized = new Image<Bgra, Byte>(outputThreshold.Cols / 2, outputThreshold.Rows / 2);
-            CvInvoke.cvResize(outputThreshold, outputThresholdResized, INTER.CV_INTER_CUBIC);
-
-            // Retour de l'image
-            return outputThresholdResized.Bitmap;
-        }
-
+        /// <summary>
+        /// Convert a BitmapSource object to a Bitmap one
+        /// </summary>
+        /// <param name="source">The BitmapSource object to convert</param>
+        /// <returns>The Bitmap object corresponding to the BitmapSource parameter</returns>
         public static Bitmap GetBitmap(BitmapSource source)
         {
             Bitmap bmp = new Bitmap(source.PixelWidth, source.PixelHeight, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
@@ -60,6 +31,11 @@ namespace MotionChallenge
             return bmp;
         }
 
+        /// <summary>
+        /// Convert a Bitmap object to a BitmapSource one
+        /// </summary>
+        /// <param name="bitmap">The Bitmap object to convert</param>
+        /// <returns>The BitmapSource object corresponding to the Bitmap parameter</returns>
         public static BitmapSource GetBitmapSource(Bitmap bitmap)
         {
             return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(

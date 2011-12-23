@@ -44,13 +44,8 @@ namespace MotionChallenge
             // Texture loading
             for (int i = 0; i < wallCount; i++)
             {
-                textureId[i] = GL.GenTexture();
+                textureId[i] = TexLib.TexUtil.CreateTextureFromFile(wallsPath[i]);
                 GL.BindTexture(TextureTarget.Texture2D, textureId[i]);
-                Bitmap bitmap = new Bitmap(wallsPath[i]);
-                BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bitmapData.Width, bitmapData.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bitmapData.Scan0);
-                bitmap.UnlockBits(bitmapData);
-
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             }
@@ -132,46 +127,49 @@ namespace MotionChallenge
         {
             double wallY = getY();
 
-            // Mur qui avance
+            // Moving wall
+            // The moving wall is composed of 4 layers (+ left, right and rear sides)
+            // These layers are textured with the posture that the player have to do
+            // This succession of layers gives an illusion of a 3D hole in the wall
             GL.BindTexture(TextureTarget.Texture2D, textureId[currentWallId]);
             GL.Begin(BeginMode.Quads);
-                // Face arriere
+                // Rear side
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth, 0);
 
-                // Face laterale gauche
+                // Left side
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(-wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(-wallWidth, wallY + wallDepth, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY, 0);
 
-                // Face laterale droite
+                // Right side
                 GL.TexCoord2(0, 0); GL.Vertex3(wallWidth, wallY, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(wallWidth, wallY, 0);
 
-                // Face interieure 1
+                // Inner wall 1
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth * 1 / 4, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth * 1 / 4, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth * 1 / 4, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth * 1 / 4, 0);
 
-                // Face interieure 2
+                // Inner wall 2
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth * 2 / 4, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth * 2 / 4, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth * 2 / 4, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth * 2 / 4, 0);
 
-                // Face interieure 3
+                // Inner wall 3
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth * 3 / 4, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth * 3 / 4, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth * 3 / 4, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth * 3 / 4, 0);
 
-                // Face frontale
+                // Front side
                 GL.Color3(colors[0]); GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY, wallHeight);
                 GL.Color3(colors[1]); GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY, wallHeight);
                 GL.Color3(colors[2]); GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY, 0);
