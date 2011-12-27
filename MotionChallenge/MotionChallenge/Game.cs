@@ -8,6 +8,10 @@ using System.Timers;
 
 namespace MotionChallenge
 {
+	/**
+	 * Cette classe représente une partie de MotionChallenge.
+	 * Elle contient un Niveau, ainsi qu'un système de "tick" pour faire évoluer le monde.
+	 */
     class Game
     {
         private Level level;
@@ -16,13 +20,19 @@ namespace MotionChallenge
 
         DateTime timeRef = DateTime.Now;
 
+		/*
+		 * À quelle fréquence (en Hz) le jeu doit évoluer
+		 */
         private const int THREAD_FREQ = 30;
 
+		/**
+		 * Initialise un jeu.
+		 */
         public Game(GLControl glControl, int playerCount)
         {
             level = new Level(glControl, playerCount);
 
-            // create game loop routine
+            //Mettre en place le timer pour faire évoluer le monde
             timer = new System.Timers.Timer();
             timer.Interval = 1000 / THREAD_FREQ;
             timer.Elapsed += new ElapsedEventHandler(timerRoutine);
@@ -30,9 +40,12 @@ namespace MotionChallenge
             isRunning = true;
         }
 
+        /**
+		 * Arrêter le jeu
+		 */
         public void stopGame()
         {
-            // kill game timer
+            // Terminer le timer proprement
             if (timer != null)
             {
                 timer.Stop();
@@ -42,6 +55,9 @@ namespace MotionChallenge
             level.reset();
         }
 
+        /**
+		 * Alterner entre la pause et le jeu selon l'état actuel.
+		 */
         public void togglePause()
         {
             if (isRunning)
@@ -55,6 +71,9 @@ namespace MotionChallenge
             isRunning = !isRunning;
         }
 
+        /**
+		 * Faire évoluer le monde d'une itération en lui indiquant combien de temps s'est écoulé depuis le dernier appel.
+		 */
         private void timerRoutine(object sender, ElapsedEventArgs e)
         {
             DateTime now = DateTime.Now;

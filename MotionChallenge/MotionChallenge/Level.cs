@@ -6,35 +6,73 @@ using System.Windows.Forms;
 
 namespace MotionChallenge
 {
-    /*
-     * LEVEL
-     * 
-     *  Manage walls.
-     * 
-     */
+    /**
+	 * Un Level contient des murs, une représentation OpenGl et une "poignée" Kinect.
+	 *
+	 * C'est la classe la plus importante du jeu.
+	 */
     class Level
     {
+		/*
+		 * Ce string sert de pattern pour l'affichage des informations sur le HUD (Head Up Display)
+		 */
         private const string HUD_INFO = "Nombre de joueur(s) : %pc\r\nNombre de murs : %w/%tw\r\nDernier score : %ls";
 
+		/*
+		 * Cet objet comprend les données Kinect du joueur.
+		 * @note le terme est ambigu, car pplayer peut aussi contenir *plusieurs* joueurs.
+		 */
         private Player player;
+
+		/*
+		 * Tout comme player, le terme wall est ambigu. Il correspond à l'objet encapsulant tous les murs (dont le mur actuel).
+		 */
         private Wall wall;
+
+		/*
+		 * La tolérance d'erreur
+		 * TODO : supprimer ?
+		 */
         private const int HOLE_THRESHOLD = 10;
 
+		/*
+		 * Définit si le HUD doit être rafraîchi à la prochaine itération du thread principal.
+		 */
         private bool hudIsDirty = true;
+
+		/*
+		 * Le score total, tous murs confondus depuis le lancement du niveau
+		 */
         private int totalScore = 0;
+
+		/*
+		 * Le score effectué sur le dernier mur affiché.
+		 * 0 si aucun mur n'a encore été réussi.
+		 */
         private int lastScore = 0;
+
+		/*
+		 * Le nombre total de murs à valider
+		 */
         private int totalWall = 0;
+
+		/*
+		 * Le mur actuellement affiché
+		 */
         private int currentWall = 1;
 
-        // The GLControl used for displaying OpenGL graphics
+        /*
+		 * Le contrôle permettant d'afficher de l'OpenGL.
+		 */
         private GLControl glControl;
 
-        // Parameters used for drawing with OpenGL
-        // The vertical axis is Z
-        // The player stand on the Y axis, his eyes are the camera (average height is about 170 cm)
-        // The wall is at (0, 0, 0) at the beginning of the game and is moving to the player (wallY is decreasing)
-        // The player is facing the wall, looking at a fixed vertex (0, 0, 170)
-        // groundMin, groundMax, groundWidth define the size of the rail where the wall is moving
+		/**
+		 * Une liste de paramètres utilisé pour le dessin OpenGL.
+		 * @note l'axe vertical est l'axe Z
+		 * @note le joueur se trouve sur l'axe Y et se déplace sur l'axe X
+		 * @note la caméra correspond globalement aux yeux du joueur (à 1m70 du sol)
+		 * @note le mur débute en (0,0,0) puis se déplace sur l'axe Y
+		 */
         float cameraX = 0;
         float cameraY = -400;
         float cameraZ = 170;
@@ -45,35 +83,59 @@ namespace MotionChallenge
         double groundMin = -400;
         double groundMax = 100;
         double groundWidth = 180;
-        
+
+		/**
+		 * Initialise le Level.
+		 */
         public Level(GLControl _glControl, int playerCount)
         {
+			//Enregistrer le composant OpenGl à utiliser pour le dessin 3D
             glControl = _glControl;
+
+			//Initialise le joueur contneant les données Kinect
             player = new Player(playerCount);
+
+			//Crée l'objet mur, en lui indiquant le nombre de joueurs afin de pouvoir charger les images appropriées.
             wall = new Wall(playerCount);
+
+			//Définit le nombre total de murs, qui sera affiché sur le HUD.
             totalWall = wall.getNumberOfWalls();
 
+			//Initialise OpenGL.
             initStage();
         }
 
+        /**
+		 * Fait avancer la scène de `elapsed` millisecondes
+		 */
         public void update(int elapsed)
         {
-            // update wall position
+            //Met à jour la position du mur
             wall.update(elapsed);
+
+			//Théoriquement, on devrait ici appeler une méthode update() sur le joueur.
+			//Cependant, Kinect s'occupe de mettre à jour automatiquement les données via l'évènement DepthFrameReady et ce n'est donc pas nécessaire
             //player.update(elapsed);
 
-            // force OpenGL update in main thread
+            //Forcer une mise à jour OpenGl en invalidant les données précédemment dessinnées
             glControl.Invalidate();
 
+			//Le mur est-il en bout de rail ?
             if (wall.atEndOfLine())
             {
-                // check player
+                //Déterminer le pourcentage du joueur dans le mur et hors du mur :
                 int[] percent = player.percentValues(wall);
+
+				//TODO : supprimer ?
                 Console.WriteLine("In " + percent[0] + "        | Out " + percent[1]);
+
+				//Enregistrer le dernier score pour l'afficher dans le HUD
                 lastScore = Math.Max(0, percent[0] - (percent[1] - 20) / 2);
 
                 totalScore += lastScore;
                 currentWall++;
+
+				//Lever le flag demandant une mise à jour du HUD.
                 hudIsDirty = true;
             }
         }
@@ -84,9 +146,12 @@ namespace MotionChallenge
             player.reset();
         }
 
-        
+
         ////////////////////// --- UI methods below  --- //////////////////////
 
+        /**
+		 * Initialise la scène en indiquant à OpenGl la façon de dessiner.
+		 */
         private void initStage()
         {
             // Add draw routine
@@ -101,18 +166,21 @@ namespace MotionChallenge
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
         }
 
+        /**
+		 * Redessine la scène
+		 */
         private void drawAll(object sender, PaintEventArgs e)
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            // Initialize OpenGL matrices
+            //Initialisation des matrices d'OpenGL :
             GL.MatrixMode(MatrixMode.Projection);
             GL.LoadIdentity();
             GL.Frustum(-1, 1, -1, 0.5, 1, 1000);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
 
-            // Camera configuration
+            //Configurer la caméra
             cameraLookAt = Matrix4.LookAt(cameraX, cameraY, cameraZ, cameraDirectionX, cameraDirectionY, cameraDirectionZ, 0.0f, 0.0f, 1.0f);
             GL.LoadMatrix(ref cameraLookAt);
 
@@ -123,15 +191,19 @@ namespace MotionChallenge
             wall.draw();
             player.draw(wall.getY());
 
+			//Envoyer les données et mettre à jour l'affichage :
             GL.Flush();
             glControl.SwapBuffers();
         }
 
         private void draw()
         {
-            //////////////////// 2D graphics ////////////////////
+            /**
+			 * GRAPHIQUES 2D : HUD
+			 */
             if (hudIsDirty)
             {
+				//Mettre à jour le HUD à partir du pattern et des informations stockées sur la classe.
                 MainWindow.getInstance().scoreLabel.Content = totalScore.ToString();
                 string infos = HUD_INFO;
                 infos = infos.Replace("%pc", player.getPlayerCount().ToString());
@@ -146,31 +218,32 @@ namespace MotionChallenge
 
                 if (currentWall > totalWall)
                 {
-                    //End of the game
+                    //Fin du jeu
                     MainWindow.getInstance().Close();
                 }
             }
-            /////////////////////////////////////////////////////
 
-            //////////////////// 3D graphics ////////////////////
-            // Universe
+
+            /**
+			 * Graphiques 3D
+			 */
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
                 GL.Color3(Color.LightGray);
 
-                // Left side of the universe
+                // Côté gauche
                 GL.Vertex3(-1000, 1, Wall.wallHeight * 4);
                 GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight * 4);
                 GL.Vertex3(-Wall.wallWidth, 1, 0);
                 GL.Vertex3(-1000, 1, 0);
 
-                // Front side of the universe
+                // Côté face
                 GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight * 4);
                 GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight * 4);
                 GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight);
                 GL.Vertex3(-Wall.wallWidth, 1, Wall.wallHeight);
 
-                // Right side of the universe
+                // Côté droit
                 GL.Vertex3(Wall.wallWidth, 1, Wall.wallHeight * 4);
                 GL.Vertex3(1000, 1, Wall.wallHeight * 4);
                 GL.Vertex3(1000, 1, 0);
@@ -179,12 +252,11 @@ namespace MotionChallenge
                 GL.Color3(Color.White);
             GL.End();
 
-            // Universe 2
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
                 GL.Color3(Color.DarkGray);
 
-                // Background of the universe
+                // Arrière plan du monde
                 GL.Vertex3(-2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
                 GL.Vertex3(2 * Wall.wallWidth, 100, 2 * Wall.wallHeight);
                 GL.Vertex3(2 * Wall.wallWidth, 100, 0);
@@ -193,7 +265,7 @@ namespace MotionChallenge
                 GL.Color3(Color.White);
             GL.End();
 
-            // Ground (play area line)
+            // Zone de jeu (la ligne)
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
                 GL.Color3(Color.Red);
@@ -206,7 +278,7 @@ namespace MotionChallenge
                 GL.Color3(Color.White);
             GL.End();
 
-            // Ground (rail)
+            // Zone de jeu (le rail)
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
                 GL.Color3(Color.Yellow);
@@ -219,7 +291,7 @@ namespace MotionChallenge
                 GL.Color3(Color.White);
             GL.End();
 
-            // Ground (global)
+            // Le sol (le reste)
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Begin(BeginMode.Quads);
                 GL.Vertex3(-1000, groundMax, 0);
@@ -227,7 +299,6 @@ namespace MotionChallenge
                 GL.Vertex3(1000, groundMin, 0);
                 GL.Vertex3(-1000, groundMin, 0);
             GL.End();
-            //////////////////////////////////////////////////////
         }
     }
 }

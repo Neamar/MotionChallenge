@@ -9,20 +9,38 @@ using System.IO;
 
 namespace MotionChallenge
 {
+	/**
+	 * Définit un ensemble de murs, y compris le mur actuellement affiché
+	 */
     class Wall
     {
+		/*
+		 * Un tableau contenant l'identifiant de toutes les textures mur.
+		 */
         private int[] textureId;
+
+		/*
+		 * Un tableau contenant l'URI des différentes images sur le disque.
+		 */
         private string[] wallsPath;
 
-        // Position relative du mur pendant son parcours (de 0 a 1000)
+        /*
+		 * Position relative du mur pendant son parcours (de 0 a 1000)
+		 */
         private int position = 0;
 
+		/**
+		 * Quelques valeurs pour le mur :
+		 */
         private const int NORMAL_SPEED = 10;
         private const int HARD_SPEED = 8;
         private int wallSpeed;
         private int wallCount;
         private int currentWallId = 0;
 
+		/**
+		 * Géométrie du mur
+		 */
         public static double wallWidth = 180;
         public static double wallHeight = 240;
         public static double wallDepth = 10;
@@ -32,16 +50,21 @@ namespace MotionChallenge
         Random randomizer = new Random();
         Color[] colors = new Color[4];
 
+		/**
+		 * À l'initialisation, charger tous les murs du mode sélectionné en mémoire
+		 */
         public Wall(int playerCount)
         {
+			//On ne peut pas utiliser de chemin absolu, il faut tricher en relatif :
             wallsPath = Directory.GetFiles(@"..\..\..\..\Walls\" + playerCount + @"j\", "*.png");
             wallCount = wallsPath.Length;
 
             textureId = new int[wallCount];
 
+			//Définir la vitesse du mur en fonction du mode choisi. Le mode HARD est plus lent car les images sont plus dures.
             wallSpeed = (playerCount > 3) ? HARD_SPEED : NORMAL_SPEED;
 
-            // Texture loading
+            //Chargement des textures
             for (int i = 0; i < wallCount; i++)
             {
                 textureId[i] = TexLib.TexUtil.CreateTextureFromFile(wallsPath[i]);
@@ -50,10 +73,13 @@ namespace MotionChallenge
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
             }
 
-            // generate colors for first wall
+            //Générer les couleurs pour le mur (elles sont aléatoires pour chaque mur)
             generateNewColors();
         }
 
+        /**
+		 * Nettoyer la mémoire pour éviter les fuites.
+		 */
         public void reset()
         {
             for (int i = 0; i < wallCount; i++)
@@ -67,6 +93,9 @@ namespace MotionChallenge
             return wallCount;
         }
 
+        /**
+		 * Renvoie true si le mur est en fin de course
+		 */
         public bool atEndOfLine()
         {
             return (position >= 1000);
@@ -77,6 +106,9 @@ namespace MotionChallenge
             return position;
         }
 
+        /**
+		 * Met à jour la position du mur
+		 */
         public void update(int elapsed)
         {
             if (!atEndOfLine())
@@ -86,19 +118,29 @@ namespace MotionChallenge
             }
             else
             {
+				//Passer au mur suivant
                 position = 0;
                 currentWallId++;
+
+				//Définir les couleurs du nouveau mur
                 generateNewColors();
                 if (currentWallId >= wallCount)
                 {
                     currentWallId = 0;
                 }
+
+                //TODO : supprimer ?
                 Console.WriteLine("New wall: " + currentWallId);
             }
         }
 
+        /**
+		 * Récupérer un tableau de byte représentant le mur actuel.
+		 * Cette fonction permettra de déterminer la précision du joueur.
+		 */
         public byte[] getCurrentWallByteArray()
         {
+			//TODO : passer tout ça dans Util ?
             Bitmap bmp = new Bitmap(wallsPath[currentWallId]);
             BitmapData bmpd = bmp.LockBits(
                 new Rectangle(0, 0, bmp.Width, bmp.Height),
@@ -118,58 +160,62 @@ namespace MotionChallenge
             return values;
         }
 
+        /**
+		 * Détermine la position sur l'axe Y du mur en fonction de son avancement
+		 */
         public double getY()
         {
             return initialWallY * getPosition() / 1000;
         }
 
+        /**
+		 * Dessiner le mur à l'écran.
+		 */
         public void draw()
         {
             double wallY = getY();
 
-            // Moving wall
-            // The moving wall is composed of 4 layers (+ left, right and rear sides)
-            // These layers are textured with the posture that the player have to do
-            // This succession of layers gives an illusion of a 3D hole in the wall
+            // Déplacer le mur.
+			// Un mur est constitué de 4 couches afin de lui donner une illusion de profondeur.
             GL.BindTexture(TextureTarget.Texture2D, textureId[currentWallId]);
             GL.Begin(BeginMode.Quads);
-                // Rear side
+                // Arrière
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth, 0);
 
-                // Left side
+                // Côté gauche
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(-wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(-wallWidth, wallY + wallDepth, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY, 0);
 
-                // Right side
+                // Côté droit
                 GL.TexCoord2(0, 0); GL.Vertex3(wallWidth, wallY, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(wallWidth, wallY, 0);
 
-                // Inner wall 1
+                // Mur intérieur n°1
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth * 1 / 4, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth * 1 / 4, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth * 1 / 4, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth * 1 / 4, 0);
 
-                // Inner wall 2
+				// Mur intérieur n°2
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth * 2 / 4, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth * 2 / 4, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth * 2 / 4, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth * 2 / 4, 0);
 
-                // Inner wall 3
+				// Mur intérieur n°3
                 GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY + wallDepth * 3 / 4, wallHeight);
                 GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY + wallDepth * 3 / 4, wallHeight);
                 GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY + wallDepth * 3 / 4, 0);
                 GL.TexCoord2(0, 1); GL.Vertex3(-wallWidth, wallY + wallDepth * 3 / 4, 0);
 
-                // Front side
+                // Mur de face
                 GL.Color3(colors[0]); GL.TexCoord2(0, 0); GL.Vertex3(-wallWidth, wallY, wallHeight);
                 GL.Color3(colors[1]); GL.TexCoord2(1, 0); GL.Vertex3(wallWidth, wallY, wallHeight);
                 GL.Color3(colors[2]); GL.TexCoord2(1, 1); GL.Vertex3(wallWidth, wallY, 0);
@@ -179,6 +225,9 @@ namespace MotionChallenge
             GL.End();
         }
 
+        /**
+		 * Génère aléatoirement un tableau de couleur qui sera utilisé pour colorier le mur.
+		 */
         private void generateNewColors()
         {
             for (int i = 0; i < colors.Length; i++)
@@ -187,6 +236,9 @@ namespace MotionChallenge
             }
         }
 
+        /**
+		 * Renvoie une couleur déterminée aléatoirement
+		 */
         private Color getRandomColor()
         {
             return Color.FromArgb(

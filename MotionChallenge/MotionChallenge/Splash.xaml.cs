@@ -21,6 +21,9 @@ namespace MotionChallenge
     /// </summary>
     public partial class Splash : Window
     {
+		/*
+		 * Le type de jeu en cours
+		 */
         private int gameMode;
 
         public MainWindow mainWindow;
@@ -30,15 +33,19 @@ namespace MotionChallenge
             InitializeComponent();
         }
 
+        /**
+		 * Lors d'un clic sur un bouton, lancer le jeu en lui passant en paramètre le mode choisi.
+		 */
         private void nbPlayer_Click(object sender, RoutedEventArgs e)
         {
+			//Récupérer le nombre de joueurs à partir du nom du bouton.
+			//À noter : le mode MEGA HARD correspond à un hypothétique mode 4 joueurs.
             int playerCount = int.Parse((sender as Button).Name.Replace("nbPlayer", ""));
 
-            // Memorise les informations qui serviront pour le scoring
+            //Mémorise les informations qui serviront pour le scoring
             gameMode = playerCount;
-            // Demande le nom des joueurs
-            //Microsoft.VisualBasic.Interaction.InputBox("Noms : ", "Nom des joueurs pour le mode " + (sender as Button).Name, "");
-            
+
+			//Initialiser la fenêtre de jeu et s'abonner à l'évènement de fermeture pour reprendre la main en fin de jeu
             mainWindow = new MainWindow(playerCount);
             mainWindow.Show();
             mainWindow.Closing += new System.ComponentModel.CancelEventHandler(mainWindow_Closing);
@@ -46,11 +53,15 @@ namespace MotionChallenge
             this.Hide();
         }
 
+        /**
+		 * Une partie se termine.
+		 * Récupérer le score et se réafficher
+		 */
         void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             scoreLabel.Content = (sender as MainWindow).scoreLabel.Content;
 
-            // Met a jour le tableau des scores
+            // Mettre à jour le tableau des scores
             listBox.Items.Insert(0, getModeName() + " \t" + (sender as MainWindow).scoreLabel.Content);
 
             this.Show();

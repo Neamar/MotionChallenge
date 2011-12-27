@@ -12,6 +12,9 @@ using System.Windows;
 
 namespace MotionChallenge
 {
+	/**
+	 * Classe offrant des fonctions utilitaires communes.
+	 */
     class Util
     {
         /// <summary>

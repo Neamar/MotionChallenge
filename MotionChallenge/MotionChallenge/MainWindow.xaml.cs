@@ -22,18 +22,24 @@ namespace MotionChallenge
     /// </summary>
     public partial class MainWindow : Window
     {
-        // singleton instance
+        /*
+		 * Instance singleton pour récupérer la fenêtre principale
+		 */
         static MainWindow instance;
 
-        // GLControl component used for displaying OpenGL graphics on Windows Forms (not on WPF windows)
-        // For use in WPF : The GLControl component has to be included in a WindowsFormsHost first
-        // Then the WindowsFormsHost component should be included in the WPF window
-        // Because of airspace limitations, nothing can draw on top of the WindowsFormHost component
+        /*
+		 * Composant permettant de dessiner de l'OpenGl avec WindowsForms.
+		 */
         GLControl glControl;
 
-        // Game resources
+        /*
+		 * Le jeu en lui-même
+		 */
         Game game;
 
+		/*
+		 * Le nombre de joueurs pour la partie en cours
+		 */
         int playerCount;
 
         public MainWindow(int playerCount)
@@ -43,31 +49,43 @@ namespace MotionChallenge
             this.playerCount = playerCount;
         }
 
-        // Use to access UI elements from everywhere in the namespace
+        /**
+		 * Méthode statique pour récupérer le singleton.
+		 */
         public static MainWindow getInstance()
         {
             return instance;
         }
 
+        /**
+		 * La fenêtre vient de s'ouvrir.
+		 */
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Create the GLControl component
+            //Créer le composant OpenGL et définir ses limites
             glControl = new OpenTK.GLControl();
             glControl.SetBounds(0, 0, 640, 480);
 
-            // Add the GLControl component into the WindowsFormHost
+            //L'ajouter à l'intérieur de la fenêtre
             windowsFormsHost.Child = glControl;
 
-            // Create game resources
+            //Créer un nouveau jeu
             game = new Game(glControl, playerCount);
         }
 
+        /**
+		 * La fenêtre va se fermer
+		 */
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // stop game threads
+            //Arrêter le jeu
             game.stopGame();
         }
 
+        /**
+		 * On a appuyé sur une touche, traiter l'évènement.
+		 * @note espace = pause.
+		 */
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             switch (e.Key)
