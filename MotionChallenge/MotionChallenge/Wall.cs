@@ -128,9 +128,6 @@ namespace MotionChallenge
                 {
                     currentWallId = 0;
                 }
-
-                //TODO : supprimer ?
-                Console.WriteLine("New wall: " + currentWallId);
             }
         }
 
@@ -140,7 +137,6 @@ namespace MotionChallenge
 		 */
         public byte[] getCurrentWallByteArray()
         {
-			//TODO : passer tout ça dans Util ?
             Bitmap bmp = new Bitmap(wallsPath[currentWallId]);
             BitmapData bmpd = bmp.LockBits(
                 new Rectangle(0, 0, bmp.Width, bmp.Height),

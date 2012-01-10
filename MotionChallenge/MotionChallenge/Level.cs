@@ -29,11 +29,6 @@ namespace MotionChallenge
 		 */
         private Wall wall;
 
-		/*
-		 * La tolérance d'erreur
-		 * TODO : supprimer ?
-		 */
-        private const int HOLE_THRESHOLD = 10;
 
 		/*
 		 * Définit si le HUD doit être rafraîchi à la prochaine itération du thread principal.
@@ -126,7 +121,6 @@ namespace MotionChallenge
                 //Déterminer le pourcentage du joueur dans le mur et hors du mur :
                 int[] percent = player.percentValues(wall);
 
-				//TODO : supprimer ?
                 Console.WriteLine("In " + percent[0] + "        | Out " + percent[1]);
 
 				//Enregistrer le dernier score pour l'afficher dans le HUD

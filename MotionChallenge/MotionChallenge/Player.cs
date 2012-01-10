@@ -52,8 +52,7 @@ namespace MotionChallenge
                 nui = Runtime.Kinects[0];
 
 				//Indiquer les options qui nous seront utiles. Dans notre cas, la profondeur
-				//TODO : virer skeletalTracking ?
-                nui.Initialize(RuntimeOptions.UseDepthAndPlayerIndex | RuntimeOptions.UseSkeletalTracking);
+                nui.Initialize(RuntimeOptions.UseDepthAndPlayerIndex);
 
 				//Enregistrer une fonction écoutante pour recevoir les données de Kinect lorsqu'une nouvelle DepthFrame est prête.
                 nui.DepthFrameReady += new EventHandler<ImageFrameReadyEventArgs>(nui_DepthFrameReady);
@@ -246,7 +245,6 @@ namespace MotionChallenge
             return colorFrame;
         }
 
-        //TODO : à mettre en inline ? Pas besoin d'en faire une fonction.
         private int GetPlayerIndex(byte firstFrame)
         {
             //returns 0 = no player, 1 = 1st player, 2 = 2nd player...
