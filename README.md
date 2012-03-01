@@ -18,5 +18,5 @@ Le jeu n'est *pas* maintenu.
 
 Démonstration
 -------------
-* Vidéo de démonstation : http://www.youtube.com/watch?v=EKZdNIZ4fQI
+* Vidéo de démonstation : http://www.youtube.com/watch?v=j-icwZ4HsgM
 * Fichier exécutable de démonstration : https://github.com/downloads/Neamar/HoleInTheWall/MotionCaptureChallenge.zip
